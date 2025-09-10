@@ -6,15 +6,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/layouts/Layout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Students from "./pages/Students";
 import Teachers from "./pages/Teachers";
 import Attendance from "./pages/Attendance";
 import Fees from "./pages/Fees";
 import Announcements from "./pages/Announcements";
 import Reports from "./pages/Reports";
-import MyClass from "./pages/myClass";
-import MyChildren from "./pages/myChildren";
 import Settings from "./pages/Settings";
+import MyClass from "./pages/MyClass";
+import MyChildren from "./pages/MyChildren";
+import StudentsManagement from "./pages/StudentsManagement";
+import StudentInfo from "./pages/StudentInfo";
 
 const queryClient = new QueryClient();
 
@@ -37,10 +38,19 @@ const App = () => (
             path="/students"
             element={
               <Layout>
-                <Students />
+                <StudentsManagement />
               </Layout>
             }
           />
+          <Route
+            path="/students/:id"
+            element={
+              <Layout>
+                <StudentInfo />
+              </Layout>
+            }
+          />
+
           <Route
             path="/teachers"
             element={

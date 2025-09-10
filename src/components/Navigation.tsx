@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -34,6 +34,8 @@ const Navigation = ({
   userRole,
   setUserRole,
 }: NavigationProps) => {
+  // Mobile sidebar toggle
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -141,95 +143,151 @@ const Navigation = ({
   }, [currentActive, setActiveSection]); // لاحظ: تجاهلنا activeSection لتجنب loop غير مرغوب إذا أردت
 
   return (
-    <Card className="w-80 h-full bg-card/50 backdrop-blur-sm border-r border-border/50">
-      <div className="p-6">
-        {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-islamic rounded-full mx-auto mb-4 flex items-center justify-center shadow-islamic">
-            <GraduationCap className="w-8 h-8 text-primary-foreground" />
-          </div>
-          <h2 className="font-bold text-xl text-foreground font-arabic">
-            روضة الأنصار
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            نظام إدارة الروضة
-          </p>
-        </div>
+    <>
+      {/* Hamburger for mobile */}
+      <button
+        className="md:hidden fixed top-4 right-4 z-50 bg-card p-2 rounded shadow-lg border border-border"
+        aria-label="Open navigation"
+        onClick={() => setSidebarOpen(true)}
+      >
+        <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+          <path
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
 
-        {/* User Role Badge + Role Switch */}
-        <div className="mb-6 text-center space-y-3">
-          <Badge variant="secondary" className="font-arabic">
-            {
-              {
-                admin: "مدير",
-                teacher: "معلم",
-                parent: "ولي أمر",
-              }[userRole]
-            }
-          </Badge>
+      {/* Sidebar & overlay only rendered if open on mobile, always on desktop */}
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/30 z-30 transition-opacity duration-300 opacity-100"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      {(sidebarOpen || window.innerWidth >= 768) && (
+        <div
+          className={`fixed inset-0 z-40 md:sticky md:top-0 md:z-auto md:w-80 h-full transition-transform duration-300 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          } bg-card/50 backdrop-blur-sm border-r border-border/50`}
+          style={{ maxWidth: "20rem" }}
+        >
+          <div className="p-6 relative z-40 h-full flex flex-col">
+            {/* Close button for mobile */}
+            {sidebarOpen && (
+              <button
+                className="md:hidden absolute top-4 left-4 text-2xl"
+                aria-label="Close navigation"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+                  <path
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 6l12 12M6 18L18 6"
+                  />
+                </svg>
+              </button>
+            )}
 
-          <Select
-            value={userRole}
-            onValueChange={(value) =>
-              setUserRole(value as "admin" | "teacher" | "parent")
-            }
-          >
-            <SelectTrigger className="w-full font-arabic text-right">
-              <SelectValue placeholder="اختر الدور" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="admin">مدير</SelectItem>
-              <SelectItem value="teacher">معلم</SelectItem>
-              <SelectItem value="parent">ولي أمر</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+            {/* Logo and Title */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-islamic rounded-full mx-auto mb-4 flex items-center justify-center shadow-islamic">
+                <GraduationCap className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h2 className="font-bold text-xl text-foreground font-arabic">
+                روضة الأنصار
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                نظام إدارة الروضة
+              </p>
+            </div>
 
-        {/* Navigation Menu */}
-        <nav className="space-y-2">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentActive === item.id;
+            {/* User Role Badge + Role Switch */}
+            <div className="mb-6 text-center space-y-3">
+              <Badge variant="secondary" className="font-arabic">
+                {
+                  {
+                    admin: "مدير",
+                    teacher: "معلم",
+                    parent: "ولي أمر",
+                  }[userRole]
+                }
+              </Badge>
 
-            return (
+              <Select
+                value={userRole}
+                onValueChange={(value) =>
+                  setUserRole(value as "admin" | "teacher" | "parent")
+                }
+              >
+                <SelectTrigger className="w-full font-arabic text-right">
+                  <SelectValue placeholder="اختر الدور" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">مدير</SelectItem>
+                  <SelectItem value="teacher">معلم</SelectItem>
+                  <SelectItem value="parent">ولي أمر</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Navigation Menu */}
+            <nav className="space-y-2">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentActive === item.id;
+
+                return (
+                  <Button
+                    key={item.id}
+                    variant={isActive ? "islamic" : "ghost"}
+                    className={`w-full justify-start font-arabic text-right ${
+                      isActive ? "shadow-soft" : ""
+                    }`}
+                    onClick={() => {
+                      navigate(item.route);
+                      setSidebarOpen(false); // close sidebar on mobile after navigation
+                    }}
+                  >
+                    <Icon className="w-4 h-4 ml-3" />
+                    {item.label}
+                  </Button>
+                );
+              })}
+            </nav>
+
+            {/* Bottom Actions */}
+            <div className="mt-8 pt-6 border-t border-border/50 space-y-2">
               <Button
-                key={item.id}
-                variant={isActive ? "islamic" : "ghost"}
-                className={`w-full justify-start font-arabic text-right ${
-                  isActive ? "shadow-soft" : ""
-                }`}
+                variant="ghost"
+                className="w-full justify-start font-arabic"
                 onClick={() => {
-                  navigate(item.route);
-                  // ماعادش لازم تنادي setActiveSection هنا لأن useEffect هيملى الـ state بناءً على المسار
+                  navigate("/settings");
+                  setSidebarOpen(false);
                 }}
               >
-                <Icon className="w-4 h-4 ml-3" />
-                {item.label}
+                <Settings className="w-4 h-4 ml-3" />
+                الإعدادات
               </Button>
-            );
-          })}
-        </nav>
-
-        {/* Bottom Actions */}
-        <div className="mt-8 pt-6 border-t border-border/50 space-y-2">
-          <Button
-            variant="ghost"
-            className="w-full justify-start font-arabic"
-            onClick={() => navigate("/settings")}
-          >
-            <Settings className="w-4 h-4 ml-3" />
-            الإعدادات
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start font-arabic"
-          >
-            <LogOut className="w-4 h-4 ml-3" />
-            تسجيل الخروج
-          </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start font-arabic"
+              >
+                <LogOut className="w-4 h-4 ml-3" />
+                تسجيل الخروج
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-    </Card>
+      )}
+    </>
   );
 };
 

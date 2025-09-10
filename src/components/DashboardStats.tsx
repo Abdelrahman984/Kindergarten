@@ -1,13 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Users, 
-  GraduationCap, 
-  Calendar, 
+import { useStudents } from "@/api/students";
+import { useMyClassStudents, useTeachers } from "@/api/teachers";
+import { useClassrooms } from "@/api/classrooms";
+import {
+  Users,
+  GraduationCap,
+  Calendar,
   TrendingUp,
   BookOpen,
-  Star
+  Star,
 } from "lucide-react";
+import { useMyChildren } from "@/api/parents";
+import { useAttendanceRate } from "@/api/attendanceStats";
 
 interface StatCardProps {
   title: string;
@@ -18,10 +23,19 @@ interface StatCardProps {
   className?: string;
 }
 
-const StatCard = ({ title, value, icon: Icon, trend, trendUp, className }: StatCardProps) => (
+const StatCard = ({
+  title,
+  value,
+  icon: Icon,
+  trend,
+  trendUp,
+  className,
+}: StatCardProps) => (
   <Card className={`hover:shadow-soft transition-smooth ${className}`}>
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium font-arabic text-right">{title}</CardTitle>
+      <CardTitle className="text-sm font-medium font-arabic text-right">
+        {title}
+      </CardTitle>
       <div className="p-2 bg-gradient-islamic rounded-lg">
         <Icon className="h-4 w-4 text-primary-foreground" />
       </div>
@@ -30,8 +44,13 @@ const StatCard = ({ title, value, icon: Icon, trend, trendUp, className }: StatC
       <div className="text-2xl font-bold font-arabic text-right">{value}</div>
       {trend && (
         <div className="flex items-center justify-end mt-2">
-          <Badge variant={trendUp ? "secondary" : "destructive"} className="text-xs font-arabic">
-            <TrendingUp className={`w-3 h-3 ml-1 ${trendUp ? '' : 'rotate-180'}`} />
+          <Badge
+            variant={trendUp ? "secondary" : "destructive"}
+            className="text-xs font-arabic"
+          >
+            <TrendingUp
+              className={`w-3 h-3 ml-1 ${trendUp ? "" : "rotate-180"}`}
+            />
             {trend}
           </Badge>
         </div>
@@ -41,37 +60,51 @@ const StatCard = ({ title, value, icon: Icon, trend, trendUp, className }: StatC
 );
 
 interface DashboardStatsProps {
-  userRole: 'admin' | 'teacher' | 'parent';
+  userRole: "admin" | "teacher" | "parent";
+  userId?: string; // ضروري للمعلم أو الوالد
 }
 
-const DashboardStats = ({ userRole }: DashboardStatsProps) => {
-  if (userRole === 'admin') {
+const DashboardStats = ({ userRole, userId }: DashboardStatsProps) => {
+  const { data: students, isLoading: studentsLoading } = useStudents();
+  const { data: teachers, isLoading: teachersLoading } = useTeachers();
+  const { data: classrooms, isLoading: classroomsLoading } = useClassrooms();
+  const { data: attendanceRate, isLoading: attendanceLoading } =
+    useAttendanceRate();
+
+  const loading =
+    studentsLoading ||
+    teachersLoading ||
+    classroomsLoading ||
+    attendanceLoading;
+
+  // --- Admin view ---
+  if (userRole === "admin") {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="إجمالي الطلاب"
-          value="156"
+          value={loading ? "..." : students?.length.toString() ?? "0"}
           icon={Users}
           trend="+12 هذا الشهر"
           trendUp={true}
         />
         <StatCard
           title="المعلمين النشطين"
-          value="24"
+          value={loading ? "..." : teachers?.length.toString() ?? "0"}
           icon={GraduationCap}
           trend="+2 هذا الشهر"
           trendUp={true}
         />
         <StatCard
           title="معدل الحضور"
-          value="94%"
+          value={loading ? "..." : `${attendanceRate}%`} // لاحقًا يمكن ربط API
           icon={Calendar}
           trend="+2% من الأسبوع الماضي"
           trendUp={true}
         />
         <StatCard
           title="الفصول النشطة"
-          value="8"
+          value={loading ? "..." : classrooms?.length.toString() ?? "0"}
           icon={BookOpen}
           trend="مستقر"
           trendUp={true}
@@ -80,51 +113,61 @@ const DashboardStats = ({ userRole }: DashboardStatsProps) => {
     );
   }
 
-  if (userRole === 'teacher') {
+  // --- Teacher view ---
+  if (userRole === "teacher") {
+    const classCount = "30"; // placeholder
+    const attendanceToday = "27"; // placeholder
+    const completedAssessments = "18"; // placeholder
+    const remainingAssessments = "4"; // placeholder
+
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="طلاب صفي"
-          value="22"
+          value={loading ? "..." : classCount.toString()}
           icon={Users}
           trend="KG2-أ"
         />
         <StatCard
           title="حضور اليوم"
-          value="20/22"
+          value={loading ? "..." : `${attendanceToday}/${classCount}`}
           icon={Calendar}
           trend="91%"
           trendUp={true}
         />
         <StatCard
           title="التقييمات المكتملة"
-          value="18"
+          value={loading ? "..." : completedAssessments.toString()}
           icon={Star}
-          trend="4 متبقية"
+          trend={`${remainingAssessments} متبقية`}
         />
       </div>
     );
   }
 
-  // Parent view
+  // --- Parent view ---
+  const childrenCount = "200"; // placeholder
+  const monthlyAttendance = 96; // placeholder
+  const memorizedVerses = 15; // placeholder
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <StatCard
         title="أطفالي"
-        value="2"
+        value={loading ? "..." : childrenCount.toString()}
         icon={Users}
-        trend="أحمد وفاطمة"
+        trend="+1 هذا الشهر "
       />
       <StatCard
         title="حضور هذا الشهر"
-        value="96%"
+        value={loading ? "..." : `${monthlyAttendance}%`}
         icon={Calendar}
         trend="+2% من الشهر الماضي"
         trendUp={true}
       />
       <StatCard
         title="حفظ القرآن"
-        value="15"
+        value={loading ? "..." : memorizedVerses.toString()}
         icon={BookOpen}
         trend="آية جديدة"
         trendUp={true}

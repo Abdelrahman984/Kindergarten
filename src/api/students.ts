@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "./client";
 
+// API model (اللي راجع من الـ API)
 export interface ApiStudent {
   id: string;
   fullName: string;
@@ -15,6 +16,7 @@ export interface ApiStudent {
   attendanceRate: number;
 }
 
+// DTOs (اللي محتاجها الـ API عند الإنشاء أو التعديل)
 export interface StudentCreateDto {
   FirstName: string;
   FatherName: string;
@@ -36,7 +38,39 @@ export interface StudentUpdateDto {
   ClassroomId: string;
 }
 
+// ==================
+// Mapping functions
+// ==================
+export function mapToCreateDto(student: ApiStudent): StudentCreateDto {
+  const [firstName, fatherName, grandpaName] = student.fullName.split(" ");
+  return {
+    FirstName: firstName ?? "",
+    FatherName: fatherName ?? "",
+    GrandpaName: grandpaName ?? "",
+    DateOfBirth: student.dateOfBirth,
+    ParentPhone: student.parentPhone,
+    Address: student.address,
+    ClassroomId: student.classroomId,
+  };
+}
+
+export function mapToUpdateDto(student: ApiStudent): StudentUpdateDto {
+  const [firstName, fatherName, grandpaName] = student.fullName.split(" ");
+  return {
+    id: student.id,
+    FirstName: firstName ?? "",
+    FatherName: fatherName ?? "",
+    GrandpaName: grandpaName ?? "",
+    DateOfBirth: student.dateOfBirth,
+    ParentPhone: student.parentPhone,
+    Address: student.address,
+    ClassroomId: student.classroomId,
+  };
+}
+
+// ==================
 // API functions
+// ==================
 async function fetchStudents(): Promise<ApiStudent[]> {
   const { data } = await api.get<ApiStudent[]>("/students");
   return data;
@@ -55,7 +89,9 @@ async function deleteStudent(id: string): Promise<void> {
   await api.delete(`/students/${id}/hard`);
 }
 
-// Hooks
+// ==================
+// React Query hooks
+// ==================
 export function useStudents() {
   return useQuery({ queryKey: ["students"], queryFn: fetchStudents });
 }

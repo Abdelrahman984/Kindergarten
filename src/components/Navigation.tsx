@@ -248,7 +248,7 @@ const Navigation = ({
                   <Button
                     key={item.id}
                     variant={isActive ? "islamic" : "ghost"}
-                    className={`w-full justify-start font-arabic text-right ${
+                    className={`w-full justify-start font-arabic text-right hover:bg-primary/10 ${
                       isActive ? "shadow-soft" : ""
                     }`}
                     onClick={() => {
@@ -267,7 +267,7 @@ const Navigation = ({
             <div className="mt-8 pt-6 border-t border-border/50 space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start font-arabic"
+                className="w-full justify-start font-arabic hover:bg-primary/10 hover:text-primary"
                 onClick={() => {
                   navigate("/settings");
                   setSidebarOpen(false);
@@ -277,8 +277,8 @@ const Navigation = ({
                 الإعدادات
               </Button>
               <Button
-                variant="outline"
-                className="w-full justify-start font-arabic"
+                variant="ghost"
+                className="w-full justify-start font-arabic hover:bg-red-500/10 hover:text-red-600"
               >
                 <LogOut className="w-4 h-4 ml-3" />
                 تسجيل الخروج

@@ -21,104 +21,102 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Layout>
-                <Index />
-              </Layout>
-            }
-          />
-          <Route
-            path="/students"
-            element={
-              <Layout>
-                <StudentsManagement />
-              </Layout>
-            }
-          />
-          <Route
-            path="/students/:id"
-            element={
-              <Layout>
-                <StudentInfo />
-              </Layout>
-            }
-          />
+    <Toaster />
+    <Sonner />
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Index />
+            </Layout>
+          }
+        />
+        <Route
+          path="/students"
+          element={
+            <Layout>
+              <StudentsManagement />
+            </Layout>
+          }
+        />
+        <Route
+          path="/students/:id"
+          element={
+            <Layout>
+              <StudentInfo />
+            </Layout>
+          }
+        />
 
-          <Route
-            path="/teachers"
-            element={
-              <Layout>
-                <Teachers />
-              </Layout>
-            }
-          />
-          <Route
-            path="/attendance"
-            element={
-              <Layout>
-                <Attendance />
-              </Layout>
-            }
-          />
-          <Route
-            path="/fees"
-            element={
-              <Layout>
-                <Fees />
-              </Layout>
-            }
-          />
-          <Route
-            path="/announcements"
-            element={
-              <Layout>
-                <Announcements />
-              </Layout>
-            }
-          />
-          <Route
-            path="/reports"
-            element={
-              <Layout>
-                <Reports />
-              </Layout>
-            }
-          />
-          <Route
-            path="/my-class"
-            element={
-              <Layout>
-                <MyClass />
-              </Layout>
-            }
-          />
-          <Route
-            path="/my-children"
-            element={
-              <Layout>
-                <MyChildren />
-              </Layout>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <Layout>
-                <Settings />
-              </Layout>
-            }
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+        <Route
+          path="/teachers"
+          element={
+            <Layout>
+              <Teachers />
+            </Layout>
+          }
+        />
+        <Route
+          path="/attendance"
+          element={
+            <Layout>
+              <Attendance />
+            </Layout>
+          }
+        />
+        <Route
+          path="/fees"
+          element={
+            <Layout>
+              <Fees />
+            </Layout>
+          }
+        />
+        <Route
+          path="/announcements"
+          element={
+            <Layout>
+              <Announcements />
+            </Layout>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <Layout>
+              <Reports />
+            </Layout>
+          }
+        />
+        <Route
+          path="/my-class"
+          element={
+            <Layout>
+              <MyClass />
+            </Layout>
+          }
+        />
+        <Route
+          path="/my-children"
+          element={
+            <Layout>
+              <MyChildren />
+            </Layout>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Layout>
+              <Settings />
+            </Layout>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

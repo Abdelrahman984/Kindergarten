@@ -4,18 +4,22 @@ import api from "./client";
 export interface ApiTeacher {
   id: string;
   fullName: string;
+  phoneNumber?: string;
   subject: string;
   isActive: boolean;
+  classroomIds?: string[]; // Many-to-many: teacher can belong to multiple classrooms
 }
 
 export interface TeacherCreateDto {
   fullName: string;
   subject: string;
+  phoneNumber?: string;
+  isActive: boolean;
+  classroomIds?: string[]; // Assign multiple classrooms on creation
 }
 
 export interface TeacherUpdateDto extends TeacherCreateDto {
   id: string;
-  isActive: boolean;
 }
 
 export interface ApiStudent {
@@ -33,6 +37,8 @@ export interface ApiStudent {
 // API functions
 async function fetchTeachers(): Promise<ApiTeacher[]> {
   const { data } = await api.get<ApiTeacher[]>("/teachers");
+  console.log("Fetched teachers:", data);
+
   return data;
 }
 
@@ -46,13 +52,19 @@ async function updateTeacher(dto: TeacherUpdateDto): Promise<void> {
 }
 
 async function deleteTeacher(id: string): Promise<void> {
-  await api.delete(`/teachers/${id}/hard`);
+  await api.delete(`/teachers/${id}`);
 }
 
 async function fetchMyClassStudents(teacherId: string): Promise<ApiStudent[]> {
   const { data } = await api.get<ApiStudent[]>(
     `/teachers/${teacherId}/students`
   );
+  return data;
+}
+
+async function fetchTeacherClassrooms(teacherId: string) {
+  const { data } = await api.get(`/teachers/${teacherId}/classrooms`);
+  // Expecting array of classrooms for many-to-many
   return data;
 }
 
@@ -89,5 +101,13 @@ export function useMyClassStudents(teacherId: string) {
   return useQuery({
     queryKey: ["myClassStudents", teacherId],
     queryFn: () => fetchMyClassStudents(teacherId),
+  });
+}
+
+export function useTeacherClassrooms(teacherId: string) {
+  return useQuery({
+    queryKey: ["teacherClassrooms", teacherId],
+    queryFn: () => fetchTeacherClassrooms(teacherId),
+    enabled: !!teacherId,
   });
 }

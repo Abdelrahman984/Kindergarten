@@ -5,18 +5,19 @@ export interface ApiClassroom {
   id: string;
   name: string;
   capacity: number;
-  teacherId?: string;
-  teacherName?: string;
+  teacherIds?: string[]; // Many-to-many: classroom can have multiple teachers
+  teacherNames?: string[]; // Optional: names of teachers
 }
 
 export interface ClassroomCreateDto {
   name: string;
   capacity: number;
-  teacherId?: string;
+  teacherIds?: string[]; // Assign multiple teachers on creation
 }
 
 export interface ClassroomUpdateDto extends ClassroomCreateDto {
   id: string;
+  teacherIds?: string[]; // Update teacher assignments
 }
 
 // API functions

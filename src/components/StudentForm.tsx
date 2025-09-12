@@ -5,10 +5,10 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Button,
   MenuItem,
 } from "@mui/material";
 import { ApiStudent } from "../api/students";
+import { Button } from "@/components/ui/button";
 
 interface StudentFormProps {
   open: boolean;
@@ -132,10 +132,17 @@ export default function StudentForm({
         </TextField>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>إلغاء</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
-          {initialData ? "حفظ التعديلات" : "إضافة"}
-        </Button>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose} className="font-arabic">
+            إلغاء
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            className="font-arabic bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            {initialData ? "حفظ التعديلات" : "إضافة"}
+          </Button>
+        </div>
       </DialogActions>
     </Dialog>
   );

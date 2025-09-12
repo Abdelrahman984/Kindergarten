@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -12,7 +11,7 @@ import {
   TableBody,
   IconButton,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { Button } from "@/components/ui/button";
 import {
   useStudents,
   useCreateStudent,
@@ -117,12 +116,7 @@ export default function StudentsManagement() {
     <div className="p-4">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-xl font-bold font-arabic">إدارة الطلاب</h2>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCreate}
-          className="font-arabic"
-        >
+        <Button color="primary" onClick={handleCreate} className="font-arabic">
           إضافة طالب
         </Button>
       </div>
@@ -155,10 +149,21 @@ export default function StudentsManagement() {
           <strong>{deletingStudent?.fullName}</strong>؟
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeletingStudent(null)}>إلغاء</Button>
-          <Button onClick={confirmDelete} color="error" variant="contained">
-            حذف
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setDeletingStudent(null)}
+              className="font-arabic"
+            >
+              إلغاء
+            </Button>
+            <Button
+              onClick={confirmDelete}
+              className="font-arabic bg-red-600 text-white hover:bg-red-700"
+            >
+              حذف
+            </Button>
+          </div>
         </DialogActions>
       </Dialog>
     </div>

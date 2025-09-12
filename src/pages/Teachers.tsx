@@ -32,14 +32,8 @@ const Teachers = () => {
 
   return (
     <div className="space-y-6">
-      {/* 🔍 البحث + إضافة */}
-      <div className="flex justify-between items-center gap-4">
-        <Input
-          placeholder="ابحث بالاسم أو المادة أو الهاتف..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="font-arabic"
-        />
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xl font-bold font-arabic">إدارة المعلمين</h2>
         <Button
           className="font-arabic"
           onClick={() => {
@@ -47,8 +41,17 @@ const Teachers = () => {
             setFormOpen(true);
           }}
         >
-          + إضافة معلم
+          إضافة معلم
         </Button>
+      </div>
+      {/* 🔍 البحث + إضافة */}
+      <div className="flex justify-between items-center gap-4">
+        <Input
+          placeholder="ابحث بالاسم أو المادة أو الهاتف..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="font-arabic bg-white"
+        />
       </div>
 
       {/* 📦 الفورم (إضافة/تعديل) */}

@@ -167,7 +167,7 @@ export default function StudentsTable({
         labelDisplayedRows={({ from, to, count }) =>
           `عرض ${from}-${to} من ${count}`
         }
-        dir="rtl"
+        dir="ltr"
       />
     </Paper>
   );

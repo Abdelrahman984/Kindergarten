@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Islamic Kindergarten Management System Design System - All Arabic RTL */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap");
 
 @layer base {
   :root {
@@ -39,6 +39,12 @@
     --muted: 156 25% 94%;
     --muted-foreground: 156 15% 45%;
 
+    --success: 145 63% 49%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 42 100% 50%;
+    --warning-foreground: 0 0% 0%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
@@ -49,14 +55,26 @@
     --radius: 0.75rem;
 
     /* Islamic Gradients */
-    --gradient-islamic: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
-    --gradient-sky: linear-gradient(135deg, hsl(var(--secondary)), hsl(204 85% 85%));
-    --gradient-warm: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--orange)));
-    
+    --gradient-islamic: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--primary-light))
+    );
+    --gradient-sky: linear-gradient(
+      135deg,
+      hsl(var(--secondary)),
+      hsl(204 85% 85%)
+    );
+    --gradient-warm: linear-gradient(
+      135deg,
+      hsl(var(--accent)),
+      hsl(var(--orange))
+    );
+
     /* Shadows */
     --shadow-soft: 0 4px 20px -8px hsl(var(--primary) / 0.15);
     --shadow-islamic: 0 8px 32px -12px hsl(var(--primary) / 0.25);
-    
+
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -137,14 +155,22 @@
 
   /* Islamic Geometric Pattern Background */
   .pattern-islamic {
-    background-image: 
-      radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, hsl(var(--secondary) / 0.05) 0%, transparent 50%);
+    background-image: radial-gradient(
+        circle at 25% 25%,
+        hsl(var(--primary) / 0.05) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        hsl(var(--secondary) / 0.05) 0%,
+        transparent 50%
+      );
   }
 
   /* Arabic Typography */
   .font-arabic {
-    font-family: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: "Noto Sans Arabic", -apple-system, BlinkMacSystemFont,
+      sans-serif;
   }
 
   /* Custom Scrollbar for RTL */

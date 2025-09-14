@@ -12,7 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import { useMyChildren } from "@/api/parents";
-import { useAttendanceRate } from "@/api/attendanceStats";
+import { useAttendanceTrends } from "@/api/attendances";
 
 interface StatCardProps {
   title: string;
@@ -68,8 +68,8 @@ const DashboardStats = ({ userRole, userId }: DashboardStatsProps) => {
   const { data: students, isLoading: studentsLoading } = useStudents();
   const { data: teachers, isLoading: teachersLoading } = useTeachers();
   const { data: classrooms, isLoading: classroomsLoading } = useClassrooms();
-  const { data: attendanceRate, isLoading: attendanceLoading } =
-    useAttendanceRate();
+  const { data: attendanceTrends, isLoading: attendanceLoading } =
+    useAttendanceTrends();
 
   const loading =
     studentsLoading ||
@@ -96,8 +96,8 @@ const DashboardStats = ({ userRole, userId }: DashboardStatsProps) => {
           trendUp={true}
         />
         <StatCard
-          title="معدل الحضور"
-          value={loading ? "..." : `${attendanceRate}%`} // لاحقًا يمكن ربط API
+          title="معدل الحضور هذا الشهر"
+          value={loading ? "..." : `${attendanceTrends.thisMonthPercentage.toFixed(2)}%`} // لاحقًا يمكن ربط API
           icon={Calendar}
           trend="+2% من الأسبوع الماضي"
           trendUp={true}

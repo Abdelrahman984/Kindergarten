@@ -12,10 +12,11 @@ import Fees from "./pages/Fees";
 import Announcements from "./pages/Announcements";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import MyClass from "./pages/MyClass";
+import MyClass from "./pages/MyClassroom";
 import MyChildren from "./pages/MyChildren";
 import StudentsManagement from "./pages/StudentsManagement";
 import StudentInfo from "./pages/StudentInfo";
+import MarkAttendance from "./pages/MarkAttendance";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,14 @@ const App = () => (
           element={
             <Layout>
               <Attendance />
+            </Layout>
+          }
+        />
+        <Route
+          path="/mark-attendance"
+          element={
+            <Layout>
+              <MarkAttendance />
             </Layout>
           }
         />

@@ -1,8 +1,14 @@
+import animatePlugin from "tailwindcss-animate";
 import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -28,6 +34,14 @@ export default {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -65,19 +79,19 @@ export default {
         },
       },
       fontFamily: {
-        arabic: ['Noto Sans Arabic', 'sans-serif'],
+        arabic: ["Noto Sans Arabic", "sans-serif"],
       },
       backgroundImage: {
-        'gradient-islamic': 'var(--gradient-islamic)',
-        'gradient-sky': 'var(--gradient-sky)', 
-        'gradient-warm': 'var(--gradient-warm)',
+        "gradient-islamic": "var(--gradient-islamic)",
+        "gradient-sky": "var(--gradient-sky)",
+        "gradient-warm": "var(--gradient-warm)",
       },
       boxShadow: {
-        'soft': 'var(--shadow-soft)',
-        'islamic': 'var(--shadow-islamic)',
+        soft: "var(--shadow-soft)",
+        islamic: "var(--shadow-islamic)",
       },
       transitionTimingFunction: {
-        'smooth': 'var(--transition-smooth)',
+        smooth: "var(--transition-smooth)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -108,5 +122,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animatePlugin],
 } satisfies Config;

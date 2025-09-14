@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard,
@@ -20,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AssessmentOutlined } from "@mui/icons-material";
 
 interface NavigationProps {
   activeSection: string;
@@ -66,6 +66,12 @@ const Navigation = ({
       label: "الإعلانات",
       icon: MessageSquare,
       route: "/announcements",
+    },
+    {
+      id: "reports",
+      label: "التقارير",
+      icon: AssessmentOutlined,
+      route: "/reports",
     },
   ];
 
@@ -121,10 +127,16 @@ const Navigation = ({
 
   // استخرج الـ activeId من المسار الحالي (أخذ أول سِجِّل إذا في subpath)
   const getActiveFromPath = (pathname: string) => {
-    const cleaned = pathname.replace(/^\/+|\/+$/g, ""); // يخلّص من الـ slashes في البداية والنهاية
-    if (!cleaned) return "dashboard"; // root => dashboard
+    const cleaned = pathname.replace(/^\/+|\/+$/g, "");
+    if (!cleaned) return "dashboard";
+    // Treat mark-attendance as attendance
+    if (
+      cleaned.startsWith("attendance") ||
+      cleaned.startsWith("mark-attendance")
+    ) {
+      return "attendance";
+    }
     const firstSegment = cleaned.split("/")[0];
-    // جيب العنصر اللي route بتاعه يبدأ بنفس الـ segment
     const matched = menuItems.find((m) => {
       const routeClean = m.route.replace(/^\/+|\/+$/g, "");
       return routeClean === firstSegment;

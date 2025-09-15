@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -14,14 +13,11 @@ import {
   BookOpen,
   Star,
   Calendar,
-  CheckCircle,
   Heart,
   MessageSquare,
   FileText,
   Award,
   Clock,
-  Users,
-  TrendingUp,
 } from "lucide-react";
 
 const MyChildren = () => {

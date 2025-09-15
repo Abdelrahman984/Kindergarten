@@ -97,7 +97,11 @@ const DashboardStats = ({ userRole, userId }: DashboardStatsProps) => {
         />
         <StatCard
           title="معدل الحضور هذا الشهر"
-          value={loading ? "..." : `${attendanceTrends.thisMonthPercentage.toFixed(2)}%`} // لاحقًا يمكن ربط API
+          value={
+            loading
+              ? "..."
+              : `${attendanceTrends.thisMonthPercentage.toFixed(2)}%`
+          } // لاحقًا يمكن ربط API
           icon={Calendar}
           trend="+2% من الأسبوع الماضي"
           trendUp={true}

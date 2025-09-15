@@ -8,40 +8,42 @@ import {
   Search,
   MinusCircle,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import AttendanceTable from "@/components/AttendanceTable";
 import {
   useDailyStats,
   AttendanceReadDto,
-  useTodayAttendance,
+  useAttendanceByDate,
 } from "@/api/attendances";
+import { useFilteredList } from "@/hooks/useFilteredList";
 import { ApiClassroom, useClassrooms } from "@/api/classrooms";
-import { useStudents } from "@/api/students";
+import { attendanceStatusLabels } from "@/api/attendances";
 import { useNavigate } from "react-router-dom";
+import SkeletonLoading from "@/components/SkeletonLoading";
+import StatsCards from "./StatsCards";
+import { getPercentage } from "@/lib/utils";
 
-const DailyReport = () => {
+interface DailyReportProps {
+  date: string;
+}
+
+const DailyReport = ({ date }: DailyReportProps) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { data: students } = useStudents();
-  const { data: classrooms = [] } = useClassrooms();
   const [selectedClassroom, setSelectedClassroom] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
 
-  // Queries
-  const { data: todayAttendanceData, isLoading, error } = useTodayAttendance();
-  const { data: dailyStats, isLoading: loadingStats } = useDailyStats();
+  // Fetch classrooms for dropdown
+  const { data: classrooms } = useClassrooms();
 
-  // Filter students
-  const filteredStudents = selectedClassroom
-    ? Array.isArray(students)
-      ? students.filter((s) => s.classroomName === selectedClassroom)
-      : []
-    : Array.isArray(students)
-    ? students
-    : [];
-  const totalStudents = filteredStudents.length;
+  // Queries
+  const {
+    data: todayAttendanceData,
+    isLoading,
+    error,
+  } = useAttendanceByDate(date);
+  const { data: dailyStats, isLoading: loadingStats } = useDailyStats(date);
 
   // Filter attendance
   const todayAttendance: AttendanceReadDto[] = Array.isArray(
@@ -52,19 +54,25 @@ const DailyReport = () => {
       )
     : [];
 
-  const filteredAttendance = todayAttendance.filter((s) => {
-    const matchesSearch = s.studentName
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesClassroom = selectedClassroom
-      ? s.classroomName === selectedClassroom
-      : true;
-    const matchesStatus =
-      statusFilter !== "" ? String(s.status) === statusFilter : true;
-    return matchesSearch && matchesClassroom && matchesStatus;
+  const filtered = useFilteredList({
+    list: todayAttendance,
+    search,
+    searchKey: "studentName",
+    filters: [
+      (s) => (selectedClassroom ? s.classroomName === selectedClassroom : true),
+      (s) => (statusFilter !== "" ? String(s.status) === statusFilter : true),
+    ],
   });
 
-  if (isLoading) return <p>جاري تحميل الحضور...</p>;
+  // Pagination
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(filtered.length / pageSize);
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  if (isLoading || loadingStats) {
+    return <SkeletonLoading />;
+  }
   if (error)
     return (
       <p className="text-destructive">
@@ -75,89 +83,105 @@ const DailyReport = () => {
   return (
     <div className="space-y-4">
       {/* Quick Stats */}
-      <div className="grid md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Users className="w-5 h-5 text-primary" />
-              <div className="text-2xl font-bold text-primary">
-                {totalStudents}
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground font-arabic">
-              إجمالي الطلاب
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <CheckCircle className="w-5 h-5 text-success" />
-              <div className="text-2xl font-bold text-success">
-                {todayAttendance.filter((a) => a.status === 1).length}
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground font-arabic">
-              حاضر اليوم
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Clock className="w-5 h-5 text-warning" />
-              <div className="text-2xl font-bold text-warning">
-                {todayAttendance.filter((a) => a.status === 3).length}
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground font-arabic">متأخر</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <XCircle className="w-5 h-5 text-destructive" />
-              <div className="text-2xl font-bold text-destructive">
-                {todayAttendance.filter((a) => a.status === 2).length}
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground font-arabic">غائب</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <MinusCircle className="w-5 h-5 text-muted-foreground" />
-              <div className="text-2xl font-bold text-muted-foreground">
-                {loadingStats ? "..." : dailyStats?.unmarkedCount ?? 0}
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground font-arabic">
-              غير محدد
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <StatsCards
+        stats={[
+          {
+            label: "إجمالي الطلاب",
+            value: dailyStats?.totalRequired ?? 0,
+            icon: <Users className="w-5 h-5 text-primary" />,
+          },
+          {
+            label: "حاضر اليوم",
+            value: dailyStats?.presentCount ?? 0,
+            icon: <CheckCircle className="w-5 h-5 text-success" />,
+            trend: `${getPercentage(
+              dailyStats?.presentCount,
+              dailyStats?.totalRequired
+            )}`,
+            isPositiveStat: true,
+          },
+          {
+            label: "متأخر",
+            value: dailyStats?.lateCount ?? 0,
+            icon: <Clock className="w-5 h-5 text-warning" />,
+            trend: `${getPercentage(
+              dailyStats?.lateCount,
+              dailyStats?.totalRequired
+            )}`,
+            isPositiveStat: false,
+          },
+          {
+            label: "غائب",
+            value: dailyStats?.absentCount ?? 0,
+            icon: <XCircle className="w-5 h-5 text-destructive" />,
+            trend: `${getPercentage(
+              dailyStats?.absentCount,
+              dailyStats?.totalRequired
+            )}`,
+            isPositiveStat: false,
+          },
+          {
+            label: "غير محدد",
+            value: dailyStats?.unmarkedCount ?? 0,
+            icon: <MinusCircle className="w-5 h-5 text-muted-foreground" />,
+            trend: `${getPercentage(
+              dailyStats?.unmarkedCount,
+              dailyStats?.totalRequired
+            )}`,
+            isPositiveStat: false,
+          },
+        ]}
+        columns={5}
+      />
 
       {/* Attendance Table */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <CardTitle className="font-arabic text-right">حضور اليوم</CardTitle>
-            <div className="relative">
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="البحث عن طالب..."
-                className="pr-10 w-64 text-right font-arabic"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+            <div className="flex flex-col md:flex-row gap-2 items-center w-full md:w-auto">
+              {/* Search Input */}
+              <div className="relative w-40 md:w-64">
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="البحث عن طالب..."
+                  className="pr-10 w-full h-10 text-right font-arabic"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              {/* Classroom Dropdown */}
+              <select
+                className="px-5 w-30 h-10 text-right font-arabic bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                value={selectedClassroom}
+                onChange={(e) => setSelectedClassroom(e.target.value)}
+              >
+                <option value="">كل الفصول</option>
+                {classrooms?.map((c: ApiClassroom) => (
+                  <option key={c.id} value={c.name}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              {/* Status Dropdown */}
+              <select
+                className="px-5 w-30 h-10 text-right font-arabic bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="">كل الحالات</option>
+                {Object.entries(attendanceStatusLabels).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {filteredAttendance.length === 0 ? (
+            {filtered.length === 0 ? (
               <div className="text-center py-8">
                 <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground font-arabic text-lg">
@@ -171,7 +195,33 @@ const DailyReport = () => {
                 </button>
               </div>
             ) : (
-              <AttendanceTable data={filteredAttendance} />
+              <>
+                <AttendanceTable data={paginated} />
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-4">
+                    <button
+                      className="px-2 py-1 border rounded"
+                      disabled={page === 1}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    >
+                      السابق
+                    </button>
+                    <span className="font-arabic">
+                      صفحة {page} من {totalPages}
+                    </span>
+                    <button
+                      className="px-2 py-1 border rounded"
+                      disabled={page === totalPages}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
+                    >
+                      التالي
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </CardContent>

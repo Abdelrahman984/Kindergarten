@@ -1,15 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
 } from "@mui/material";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +20,7 @@ import { useClassrooms } from "@/api/classrooms";
 import { Calendar, Users } from "lucide-react";
 import StatsCards from "@/components/StatsCards";
 import StudentsTable from "@/components/StudentsTable";
+import SkeletonLoading from "@/components/SkeletonLoading";
 
 interface Classroom {
   id: string;
@@ -47,7 +42,7 @@ export default function StudentsManagement() {
 
   const handleCreate = () => {
     setEditingStudent(null);
-    setFormOpen(true);
+    if (isLoading || isLoadingClassrooms) return <SkeletonLoading />;
   };
 
   const handleEdit = (student: ApiStudent) => {

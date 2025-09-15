@@ -9,17 +9,17 @@ export type AttendanceStatus = 0 | 1 | 2 | 3;
 // 0: Unmarked, 1: Present, 2: Absent, 3: Late
 
 export const attendanceStatusLabels: Record<AttendanceStatus, string> = {
-  0: "Unmarked",
-  1: "Present",
-  2: "Absent",
-  3: "Late",
+  0: "غير محدد",
+  1: "حاضر",
+  2: "غائب",
+  3: "متأخر",
 };
 
 export interface AttendanceReadDto {
   id: string;
   studentId: string;
   studentName: string;
-  date: string; // UTC
+  date: string;
   status: AttendanceStatus;
   notes?: string;
   classroomId?: string;
@@ -41,6 +41,7 @@ export interface DayStats {
   absentCount: number;
   lateCount: number;
   unmarkedCount: number;
+  totalRequired: number;
 }
 
 export interface WeeklyStats {
@@ -50,6 +51,7 @@ export interface WeeklyStats {
   absentTotal: number;
   lateTotal: number;
   unmarkedTotal: number;
+  totalRequired: number;
   breakdown: DayStats[];
 }
 
@@ -60,6 +62,7 @@ export interface MonthlyStats {
   absentTotal: number;
   lateTotal: number;
   unmarkedTotal: number;
+  totalRequired: number;
   breakdown: DayStats[];
 }
 
@@ -75,6 +78,12 @@ export interface StudentAttendancePercentageDto {
   percentage: number;
 }
 
+interface UseFilteredAttendanceArgs {
+  attendance: AttendanceReadDto[];
+  search: string;
+  selectedClassroom: string;
+  statusFilter: string;
+}
 // ------------------- Queries -------------------
 
 // جلب حضور يوم محدد
@@ -89,10 +98,10 @@ export const useAttendanceByDate = (date: string) =>
     },
   });
 
-export const useTodayAttendance = () => {
-  const today = new Date().toISOString().split("T")[0];
-  return useAttendanceByDate(today);
-};
+// export const useTodayAttendance = () => {
+//   const today = new Date().toISOString().split("T")[0];
+//   return useAttendanceByDate(today);
+// };
 
 // جلب حضور طالب محدد
 export const useAttendanceByStudent = (studentId: string) =>
@@ -153,6 +162,7 @@ export const useDailyStats = (date?: string) => {
     },
   });
 };
+// إحصائيات الأسبوع
 export const useWeeklyAttendance = (date: string) =>
   useQuery<WeeklyStats>({
     queryKey: ["weeklyAttendance", date],
@@ -163,8 +173,7 @@ export const useWeeklyAttendance = (date: string) =>
       return data;
     },
   });
-
-// Monthly
+// إحصائيات الشهر
 export const useMonthlyAttendance = (date: string) =>
   useQuery<MonthlyStats>({
     queryKey: ["monthlyAttendance", date],

@@ -7,6 +7,7 @@ import {
   Users,
   Search,
   MinusCircle,
+  Calendar,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,7 @@ interface DailyReportProps {
 }
 
 const DailyReport = ({ date }: DailyReportProps) => {
+  const [selectedDate, setSelectedDate] = useState(date);
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selectedClassroom, setSelectedClassroom] = useState<string>("");
@@ -42,8 +44,9 @@ const DailyReport = ({ date }: DailyReportProps) => {
     data: todayAttendanceData,
     isLoading,
     error,
-  } = useAttendanceByDate(date);
-  const { data: dailyStats, isLoading: loadingStats } = useDailyStats(date);
+  } = useAttendanceByDate(selectedDate);
+  const { data: dailyStats, isLoading: loadingStats } =
+    useDailyStats(selectedDate);
 
   // Filter attendance
   const todayAttendance: AttendanceReadDto[] = Array.isArray(
@@ -138,7 +141,19 @@ const DailyReport = ({ date }: DailyReportProps) => {
       <Card>
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <CardTitle className="font-arabic text-right">حضور اليوم</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="font-arabic text-right">
+                حضور اليوم
+              </CardTitle>
+              <input
+                id="day-picker"
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="border rounded px-2 py-1 text-right font-arabic cursor-pointer"
+                style={{ minWidth: 120 }}
+              />
+            </div>
             <div className="flex flex-col md:flex-row gap-2 items-center w-full md:w-auto">
               {/* Search Input */}
               <div className="relative w-40 md:w-64">

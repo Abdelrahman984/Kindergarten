@@ -1,6 +1,7 @@
 // src/components/attendance/MonthlyReport.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SkeletonLoading from "./SkeletonLoading";
+import StatsCards from "./StatsCards";
 import {
   BarChart,
   Bar,
@@ -10,12 +11,23 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { CheckCircle, XCircle, Clock, MinusCircle, Users } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  MinusCircle,
+  Users,
+  Calendar,
+} from "lucide-react";
 import { useMonthlyAttendance } from "@/api/attendances";
 import { getPercentage } from "@/lib/utils";
 
+import { useState } from "react";
+
 export default function MonthlyReport({ date }: { date: string }) {
   // Helper to check if a date is the current day
+  const [selectedMonth, setSelectedMonth] = useState(date.slice(0, 7)); // yyyy-MM
+
   const isCurrentDay = (d: string) => {
     const today = new Date(date);
     const day = new Date(d);
@@ -25,62 +37,68 @@ export default function MonthlyReport({ date }: { date: string }) {
       today.getDate() === day.getDate()
     );
   };
-  const { data: stats, isLoading } = useMonthlyAttendance(date);
+  const { data: stats, isLoading } = useMonthlyAttendance(
+    selectedMonth + "-01"
+  );
 
   if (isLoading) return <SkeletonLoading />;
   if (!stats) return <p>لا توجد بيانات</p>;
 
   return (
     <div className="space-y-6">
-      {/* نفس الكروت و الشارت زي الـ WeeklyReport */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-6 text-center">
-            <Users className="w-5 h-5 text-blue-500 mx-auto" />
-            <div className="text-2xl font-bold">{stats.totalRequired}</div>
-            <p className="text-sm font-arabic">الحضور المطلوب</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
-            <div className="text-2xl font-bold">{stats.presentTotal}</div>
-            <div>{getPercentage(stats.presentTotal, stats.totalRequired)}</div>
-            <p className="text-sm font-arabic">الحضور</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <XCircle className="w-5 h-5 text-red-500 mx-auto" />
-            <div className="text-2xl font-bold">{stats.absentTotal}</div>
-            <div>{getPercentage(stats.absentTotal, stats.totalRequired)}</div>
-            <p className="text-sm font-arabic">الغياب</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <Clock className="w-5 h-5 text-yellow-500 mx-auto" />
-            <div className="text-2xl font-bold">{stats.lateTotal}</div>
-            <div>{getPercentage(stats.lateTotal, stats.totalRequired)}</div>
-            <p className="text-sm font-arabic">التأخير</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <MinusCircle className="w-5 h-5 text-gray-500 mx-auto" />
-            <div className="text-2xl font-bold">{stats.unmarkedTotal}</div>
-            <div>{getPercentage(stats.unmarkedTotal, stats.totalRequired)}</div>
-            <p className="text-sm font-arabic">غير محدد</p>
-          </CardContent>
-        </Card>
-      </div>
+      <StatsCards
+        columns={5}
+        stats={[
+          {
+            label: "الحضور المطلوب",
+            value: stats.totalRequired,
+            icon: <Users className="w-5 h-5 text-blue-500 mx-auto" />,
+          },
+          {
+            label: "الحضور",
+            value: stats.presentTotal,
+            icon: <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />,
+            trend: getPercentage(stats.presentTotal, stats.totalRequired),
+            isPositiveStat: true,
+          },
+          {
+            label: "الغياب",
+            value: stats.absentTotal,
+            icon: <XCircle className="w-5 h-5 text-red-500 mx-auto" />,
+            trend: getPercentage(stats.absentTotal, stats.totalRequired),
+            isPositiveStat: false,
+          },
+          {
+            label: "التأخير",
+            value: stats.lateTotal,
+            icon: <Clock className="w-5 h-5 text-yellow-500 mx-auto" />,
+            trend: getPercentage(stats.lateTotal, stats.totalRequired),
+            isPositiveStat: false,
+          },
+          {
+            label: "غير محدد",
+            value: stats.unmarkedTotal,
+            icon: <MinusCircle className="w-5 h-5 text-gray-500 mx-auto" />,
+            trend: getPercentage(stats.unmarkedTotal, stats.totalRequired),
+            isPositiveStat: false,
+          },
+        ]}
+      />
 
       {/* Chart */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-arabic text-right">
             إحصائيات الشهر
           </CardTitle>
+          <input
+            id="month-picker"
+            type="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="border rounded px-2 py-1 text-right font-arabic cursor-pointer"
+            style={{ minWidth: 120 }}
+          />
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -106,10 +124,40 @@ export default function MonthlyReport({ date }: { date: string }) {
                     </text>
                   );
                 }}
+                label={{
+                  value: "اليوم",
+                  position: "insideBottom",
+                  offset: -10,
+                  style: {
+                    textAnchor: "middle",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                  },
+                }}
               />
-              <YAxis />
-              <Tooltip />
-              <Legend />
+              <YAxis
+                label={{
+                  value: "عدد الطلاب",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: {
+                    textAnchor: "middle",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                  },
+                }}
+                tick={{ dx: -20 }} // ← يحرك الأرقام لليسار بمقدار 20px
+              />
+              <Tooltip
+                formatter={(value, name, props) => value}
+                labelFormatter={(label) =>
+                  new Date(label).toLocaleDateString("ar-EG", {
+                    month: "short",
+                    day: "numeric",
+                  })
+                }
+              />{" "}
+              <Legend wrapperStyle={{ marginBottom: -20 }} />
               <Bar dataKey="presentCount" name="الحضور" fill="#22c55e" />
               <Bar dataKey="absentCount" name="الغياب" fill="#ef4444" />
               <Bar dataKey="lateCount" name="التأخير" fill="#eab308" />

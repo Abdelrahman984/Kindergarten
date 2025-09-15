@@ -15,8 +15,12 @@ import { CheckCircle, XCircle, Clock, MinusCircle, Users } from "lucide-react";
 import { useWeeklyAttendance } from "@/api/attendances";
 import { getPercentage } from "@/lib/utils";
 
+import { useState } from "react";
+
 export default function WeeklyReport({ date }: { date: string }) {
   // Helper to check if a date is the current day
+  const [selectedDate, setSelectedDate] = useState(date);
+
   const isCurrentDay = (d: string) => {
     const today = new Date(date);
     const day = new Date(d);
@@ -26,13 +30,14 @@ export default function WeeklyReport({ date }: { date: string }) {
       today.getDate() === day.getDate()
     );
   };
-  const { data: stats, isLoading } = useWeeklyAttendance(date);
+  const { data: stats, isLoading } = useWeeklyAttendance(selectedDate);
 
   if (isLoading) return <SkeletonLoading />;
   if (!stats) return <p>لا توجد بيانات</p>;
 
   return (
     <div className="space-y-6">
+
       {/* Totals */}
       <StatsCards
         columns={5}
@@ -75,10 +80,17 @@ export default function WeeklyReport({ date }: { date: string }) {
 
       {/* Chart */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-arabic text-right">
             إحصائيات الأسبوع
           </CardTitle>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={e => setSelectedDate(e.target.value)}
+            className="border rounded px-2 py-1 text-right font-arabic ml-4"
+            style={{ minWidth: 120 }}
+          />
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -105,10 +117,40 @@ export default function WeeklyReport({ date }: { date: string }) {
                     </text>
                   );
                 }}
+                label={{
+                  value: "اليوم",
+                  position: "insideBottom",
+                  offset: -10,
+                  style: {
+                    textAnchor: "middle",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                  },
+                }}
               />
-              <YAxis />
-              <Tooltip />
-              <Legend />
+              <YAxis
+                label={{
+                  value: "عدد الطلاب",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: {
+                    textAnchor: "middle",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                  },
+                }}
+                tick={{ dx: -20 }} // ← يحرك الأرقام لليسار بمقدار 20px
+              />
+              <Tooltip
+                formatter={(value, name, props) => value}
+                labelFormatter={(label) =>
+                  new Date(label).toLocaleDateString("ar-EG", {
+                    month: "short",
+                    day: "numeric",
+                  })
+                }
+              />
+              <Legend wrapperStyle={{ marginBottom: -20 }} />
               <Bar
                 dataKey="presentCount"
                 name="الحضور"

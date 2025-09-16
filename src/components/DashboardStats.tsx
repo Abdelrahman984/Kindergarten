@@ -100,7 +100,7 @@ const DashboardStats = ({ userRole, userId }: DashboardStatsProps) => {
           value={
             loading
               ? "..."
-              : `${attendanceTrends.thisMonthPercentage.toFixed(2)}%`
+              : `${attendanceTrends.thisMonthPercentage.toFixed(0)}%`
           } // لاحقًا يمكن ربط API
           icon={Calendar}
           trend="+2% من الأسبوع الماضي"

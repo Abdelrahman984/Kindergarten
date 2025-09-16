@@ -22,6 +22,8 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import MessageIcon from "@mui/icons-material/Message";
 import SettingsIcon from "@mui/icons-material/Settings";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Menu, MenuItem as MuiMenuItem } from "@mui/material";
 
 interface NavigationBarProps {
   userRole: "admin" | "teacher" | "parent";
@@ -36,6 +38,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Main menu items by role (primary links only)
   const menuItems = [
     {
       id: "dashboard",
@@ -57,18 +60,6 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
             icon: <PeopleIcon />,
             route: "/teachers",
           },
-          {
-            id: "attendance",
-            label: "الحضور والغياب",
-            icon: <CalendarTodayIcon />,
-            route: "/attendance",
-          },
-          {
-            id: "fees",
-            label: "إدارة الرسوم",
-            icon: <AttachMoneyIcon />,
-            route: "/fees",
-          },
         ]
       : userRole === "teacher"
       ? [
@@ -78,12 +69,6 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
             icon: <PeopleIcon />,
             route: "/my-class",
           },
-          {
-            id: "attendance",
-            label: "الحضور",
-            icon: <CalendarTodayIcon />,
-            route: "/attendance",
-          },
         ]
       : [
           {
@@ -92,32 +77,46 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
             icon: <PeopleIcon />,
             route: "/my-children",
           },
-          {
-            id: "attendance",
-            label: "الحضور",
-            icon: <CalendarTodayIcon />,
-            route: "/attendance",
-          },
-          {
-            id: "fees",
-            label: "الرسوم",
-            icon: <AttachMoneyIcon />,
-            route: "/fees",
-          },
         ]),
-    {
-      id: "reports",
-      label: "التقارير",
-      icon: <MessageIcon />,
-      route: "/reports",
-    },
-    {
-      id: "settings",
-      label: "الإعدادات",
-      icon: <SettingsIcon />,
-      route: "/settings",
-    },
   ];
+
+  // All routes from App.tsx
+  const allRoutes = [
+    { id: "dashboard", label: "لوحة التحكم", route: "/" },
+    { id: "students", label: "إدارة الطلاب", route: "/students" },
+    { id: "teachers", label: "إدارة المعلمين", route: "/teachers" },
+    { id: "attendance", label: "الحضور والغياب", route: "/attendance" },
+    { id: "mark-attendance", label: "تسجيل الحضور", route: "/mark-attendance" },
+    { id: "fees", label: "إدارة الرسوم", route: "/fees" },
+    { id: "announcements", label: "الإعلانات", route: "/announcements" },
+    { id: "reports", label: "التقارير", route: "/reports" },
+    { id: "my-class", label: "صفي", route: "/my-class" },
+    { id: "my-children", label: "أطفالي", route: "/my-children" },
+    { id: "schedule", label: "الجدول", route: "/Schedule" },
+    { id: "subjects", label: "المواد", route: "/Subjects" },
+    {
+      id: "classroom-management",
+      label: "إدارة الفصول",
+      route: "/ClassroomManagement",
+    },
+    { id: "settings", label: "الإعدادات", route: "/settings" },
+  ];
+
+  // Find routes not in menuItems (secondary links)
+  const menuRoutes = menuItems.map((item) => item.route);
+  const moreLinks = allRoutes.filter(
+    (route) => !menuRoutes.includes(route.route)
+  );
+
+  // For More menu
+  const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const openMore = Boolean(moreAnchorEl);
+  const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreAnchorEl(event.currentTarget);
+  };
+  const handleMoreClose = () => {
+    setMoreAnchorEl(null);
+  };
 
   const currentActive =
     menuItems.find((item) => item.route === location.pathname)?.id ||
@@ -229,6 +228,38 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 <ListItemText primary={item.label} />
               </ListItemButton>
             ))}
+            {/* More menu icon */}
+            {moreLinks.length > 0 && (
+              <>
+                <IconButton
+                  aria-label="more"
+                  onClick={handleMoreClick}
+                  sx={{ color: "#0e7490", ml: 1 }}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={moreAnchorEl}
+                  open={openMore}
+                  onClose={handleMoreClose}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                >
+                  {moreLinks.map((item) => (
+                    <MuiMenuItem
+                      key={item.id}
+                      onClick={() => {
+                        navigate(item.route);
+                        handleMoreClose();
+                      }}
+                      selected={location.pathname === item.route}
+                    >
+                      {item.label}
+                    </MuiMenuItem>
+                  ))}
+                </Menu>
+              </>
+            )}
             <Select
               value={userRole}
               onChange={(e) =>
@@ -266,12 +297,12 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         onClose={() => setMobileOpen(false)}
         slotProps={{
           paper: {
-        sx: {
-          bgcolor: "#f8fafc",
-          color: "#22223b",
-          borderRadius: 3,
-          boxShadow: "0 4px 16px 0 rgba(14,116,144,0.08)",
-        },
+            sx: {
+              bgcolor: "#f8fafc",
+              color: "#22223b",
+              borderRadius: 3,
+              boxShadow: "0 4px 16px 0 rgba(14,116,144,0.08)",
+            },
           },
         }}
       >
@@ -320,7 +351,41 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 <ListItemText primary={item.label} />
               </ListItemButton>
             ))}
+            {/* More menu for mobile */}
+            {moreLinks.length > 0 && (
+              <ListItemButton
+                onClick={(e) => setMoreAnchorEl(e.currentTarget)}
+                sx={{ borderRadius: 2, mx: 0.5 }}
+              >
+                <ListItemIcon>
+                  <MoreVertIcon sx={{ color: "#0e7490" }} />
+                </ListItemIcon>
+                <ListItemText primary="المزيد" />
+              </ListItemButton>
+            )}
           </List>
+          {/* More menu popover for mobile */}
+          <Menu
+            anchorEl={moreAnchorEl}
+            open={openMore}
+            onClose={handleMoreClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            {moreLinks.map((item) => (
+              <MuiMenuItem
+                key={item.id}
+                onClick={() => {
+                  navigate(item.route);
+                  handleMoreClose();
+                  setMobileOpen(false);
+                }}
+                selected={location.pathname === item.route}
+              >
+                {item.label}
+              </MuiMenuItem>
+            ))}
+          </Menu>
 
           <Box sx={{ mb: 2 }}>
             <Select

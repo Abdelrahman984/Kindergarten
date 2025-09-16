@@ -17,6 +17,9 @@ import MyChildren from "./pages/MyChildren";
 import StudentsManagement from "./pages/StudentsManagement";
 import StudentInfo from "./pages/StudentInfo";
 import MarkAttendance from "./pages/MarkAttendance";
+import Subjects from "./pages/Subjects";
+import ClassroomManagement from "./pages/ClassroomManagement";
+import Schedule from "./pages/Schedule";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +115,30 @@ const App = () => (
           element={
             <Layout>
               <MyChildren />
+            </Layout>
+          }
+        />
+        <Route
+          path="/Schedule"
+          element={
+            <Layout>
+              <Schedule />
+            </Layout>
+          }
+        />
+        <Route
+          path="/Subjects"
+          element={
+            <Layout>
+              <Subjects />
+            </Layout>
+          }
+        />
+        <Route
+          path="/ClassroomManagement"
+          element={
+            <Layout>
+              <ClassroomManagement />
             </Layout>
           }
         />

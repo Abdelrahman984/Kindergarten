@@ -37,8 +37,6 @@ export interface ApiStudent {
 // API functions
 async function fetchTeachers(): Promise<ApiTeacher[]> {
   const { data } = await api.get<ApiTeacher[]>("/teachers");
-  console.log("Fetched teachers:", data);
-
   return data;
 }
 

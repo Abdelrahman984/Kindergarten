@@ -89,6 +89,16 @@ async function deleteStudent(id: string): Promise<void> {
   await api.delete(`/students/${id}/hard`);
 }
 
+// Fetch students by classroomId
+async function fetchStudentsByClassroom(
+  classroomId: string
+): Promise<ApiStudent[]> {
+  const { data } = await api.get<ApiStudent[]>(
+    `/students/by-classroom/${classroomId}`
+  );
+  return data;
+}
+
 // ==================
 // React Query hooks
 // ==================
@@ -117,5 +127,14 @@ export function useDeleteStudent() {
   return useMutation({
     mutationFn: deleteStudent,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["students"] }),
+  });
+}
+
+// React Query hook for students by classroom
+export function useStudentsByClassroom(classroomId: string) {
+  return useQuery({
+    queryKey: ["students", "classroom", classroomId],
+    queryFn: () => fetchStudentsByClassroom(classroomId),
+    enabled: !!classroomId,
   });
 }

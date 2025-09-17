@@ -26,7 +26,7 @@ const Teachers = () => {
     teachers?.filter(
       (t) =>
         t.fullName.toLowerCase().includes(search.toLowerCase()) ||
-        t.subject.toLowerCase().includes(search.toLowerCase()) ||
+        t.subjectName.toLowerCase().includes(search.toLowerCase()) || // 👈 تعديل هنا
         (t.phoneNumber?.includes(search) ?? false)
     ) ?? [];
 

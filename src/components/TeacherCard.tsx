@@ -41,7 +41,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete }: TeacherCardProps) => {
       <CardContent className="space-y-3">
         <div className="flex items-center gap-2 text-right">
           <div className="flex-1 text-right">
-            <p className="font-arabic text-sm">{teacher.subject}</p>
+            <p className="font-arabic text-sm">{teacher.subjectName}</p>
           </div>
           <BookOpen className="w-4 h-4 text-muted-foreground" />
         </div>

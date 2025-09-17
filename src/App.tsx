@@ -20,6 +20,7 @@ import MarkAttendance from "./pages/MarkAttendance";
 import Subjects from "./pages/Subjects";
 import ClassroomManagement from "./pages/ClassroomManagement";
 import Schedule from "./pages/Schedule";
+import Classroom from "./pages/Classroom";
 
 const queryClient = new QueryClient();
 
@@ -135,10 +136,10 @@ const App = () => (
           }
         />
         <Route
-          path="/ClassroomManagement"
+          path="/Classroom"
           element={
             <Layout>
-              <ClassroomManagement />
+              <Classroom />
             </Layout>
           }
         />

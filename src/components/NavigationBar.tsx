@@ -95,9 +95,9 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
     { id: "schedule", label: "الجدول", route: "/Schedule" },
     { id: "subjects", label: "المواد", route: "/Subjects" },
     {
-      id: "classroom-management",
+      id: "classroom",
       label: "إدارة الفصول",
-      route: "/ClassroomManagement",
+      route: "/Classroom",
     },
     { id: "settings", label: "الإعدادات", route: "/settings" },
   ];

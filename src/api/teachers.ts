@@ -5,14 +5,15 @@ export interface ApiTeacher {
   id: string;
   fullName: string;
   phoneNumber?: string;
-  subject: string;
+  subjectId: string;
+  subjectName: string;
   isActive: boolean;
-  classroomIds?: string[]; // Many-to-many: teacher can belong to multiple classrooms
+  classroomIds?: string[];
 }
 
 export interface TeacherCreateDto {
   fullName: string;
-  subject: string;
+  subjectId: string;
   phoneNumber?: string;
   isActive: boolean;
   classroomIds?: string[]; // Assign multiple classrooms on creation

@@ -1,5 +1,7 @@
 import animatePlugin from "tailwindcss-animate";
 import type { Config } from "tailwindcss";
+// @ts-expect-error - no types for tailwindcss-rtl
+import rtlPlugin from "tailwindcss-rtl";
 
 export default {
   darkMode: ["class"],
@@ -100,20 +102,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
@@ -122,5 +116,8 @@ export default {
       },
     },
   },
-  plugins: [animatePlugin],
+  plugins: [
+    animatePlugin,
+    rtlPlugin, // ✅ RTL support
+  ],
 } satisfies Config;

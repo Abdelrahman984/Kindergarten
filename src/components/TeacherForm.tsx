@@ -9,14 +9,22 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ApiTeacher } from "@/api/teachers";
+import { ApiTeacher, TeacherCreateDto, TeacherUpdateDto } from "@/api/teachers";
 import { ApiClassroom, useClassrooms } from "@/api/classrooms";
+import { Subject, useSubjects } from "@/api/subjects"; // 👈 لازم تعمل hook subjects
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TeacherFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (teacher: Omit<ApiTeacher, "id"> | ApiTeacher) => void;
+  onSubmit: (teacher: TeacherCreateDto | TeacherUpdateDto) => void; // DTOs (TeacherCreateDto | TeacherUpdateDto)
   initialData?: ApiTeacher;
 }
 
@@ -27,9 +35,10 @@ const TeacherForm = ({
   initialData,
 }: TeacherFormProps) => {
   const { data: classrooms = [] } = useClassrooms();
+  const { data: subjects = [] } = useSubjects();
 
   const [fullName, setFullName] = useState("");
-  const [subject, setSubject] = useState("");
+  const [subjectId, setSubjectId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [selectedClassrooms, setSelectedClassrooms] = useState<string[]>([]);
@@ -37,13 +46,13 @@ const TeacherForm = ({
   useEffect(() => {
     if (initialData) {
       setFullName(initialData.fullName);
-      setSubject(initialData.subject);
+      setSubjectId(initialData.subjectId ?? ""); // 👈 ناخد id
       setPhoneNumber(initialData.phoneNumber ?? "");
       setIsActive(initialData.isActive);
-      setSelectedClassrooms(initialData.classroomIds ?? []); // لازم تضيف classroomIds في ApiTeacher
+      setSelectedClassrooms(initialData.classroomIds ?? []);
     } else {
       setFullName("");
-      setSubject("");
+      setSubjectId("");
       setPhoneNumber("");
       setIsActive(true);
       setSelectedClassrooms([]);
@@ -57,16 +66,24 @@ const TeacherForm = ({
   };
 
   const handleSubmit = () => {
-    const teacher = {
-      fullName,
-      subject,
-      phoneNumber,
-      isActive,
-      classroomIds: selectedClassrooms,
-    } as ApiTeacher;
+    const teacherPayload: TeacherCreateDto | TeacherUpdateDto = initialData
+      ? {
+          id: initialData.id,
+          fullName,
+          subjectId,
+          phoneNumber,
+          isActive,
+          classroomIds: selectedClassrooms,
+        }
+      : {
+          fullName,
+          subjectId,
+          phoneNumber,
+          isActive,
+          classroomIds: selectedClassrooms,
+        };
 
-    if (initialData) teacher.id = initialData.id; // تعديل
-    onSubmit(teacher);
+    onSubmit(teacherPayload);
     onClose();
   };
 
@@ -87,13 +104,23 @@ const TeacherForm = ({
               onChange={(e) => setFullName(e.target.value)}
             />
           </div>
+
           <div>
             <Label>المادة</Label>
-            <Input
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
+            <Select value={subjectId} onValueChange={setSubjectId}>
+              <SelectTrigger>
+                <SelectValue placeholder="اختر مادة" />
+              </SelectTrigger>
+              <SelectContent>
+                {subjects.map((s: Subject) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
           <div>
             <Label>رقم الهاتف</Label>
             <Input
@@ -101,6 +128,7 @@ const TeacherForm = ({
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </div>
+
           <div className="flex items-center gap-2">
             <input
               type="checkbox"

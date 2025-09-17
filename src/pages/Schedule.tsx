@@ -9,107 +9,77 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Calendar,
-  Clock,
-  Users,
-  MapPin,
-  BookOpen,
-  Plus,
-  Edit,
-  Trash2,
-} from "lucide-react";
+import { Calendar, Plus } from "lucide-react";
+
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import arLocale from "@fullcalendar/core/locales/ar";
 
 const Schedule = () => {
   const [activeSection, setActiveSection] = useState("schedule");
   const userRole = "admin" as const;
 
-  const weeklySchedule = [
+  const events = [
     {
-      day: "الأحد",
-      classes: [
-        {
-          time: "8:00 - 9:00",
-          subject: "القرآن الكريم",
-          teacher: "أ. فاطمة",
-          room: "الفصل الأول",
-          students: 15,
-        },
-        {
-          time: "9:00 - 10:00",
-          subject: "الرياضيات",
-          teacher: "أ. عائشة",
-          room: "الفصل الثاني",
-          students: 12,
-        },
-        {
-          time: "10:30 - 11:30",
-          subject: "اللغة العربية",
-          teacher: "أ. خديجة",
-          room: "الفصل الأول",
-          students: 15,
-        },
-        {
-          time: "11:30 - 12:30",
-          subject: "الأنشطة الفنية",
-          teacher: "أ. زينب",
-          room: "قاعة الأنشطة",
-          students: 20,
-        },
-      ],
+      title: "القرآن الكريم - أ. فاطمة",
+      start: "2025-09-14T08:00:00",
+      end: "2025-09-14T09:00:00",
     },
     {
-      day: "الاثنين",
-      classes: [
-        {
-          time: "8:00 - 9:00",
-          subject: "التربية الإسلامية",
-          teacher: "أ. مريم",
-          room: "الفصل الأول",
-          students: 15,
-        },
-        {
-          time: "9:00 - 10:00",
-          subject: "العلوم",
-          teacher: "أ. صفية",
-          room: "معمل العلوم",
-          students: 10,
-        },
-        {
-          time: "10:30 - 11:30",
-          subject: "اللغة الإنجليزية",
-          teacher: "أ. عائشة",
-          room: "الفصل الثاني",
-          students: 12,
-        },
-        {
-          time: "11:30 - 12:30",
-          subject: "الرياضة",
-          teacher: "أ. خولة",
-          room: "الملعب",
-          students: 25,
-        },
-      ],
+      title: "رياضيات - أ. عائشة",
+      start: "2025-09-14T09:00:00",
+      end: "2025-09-14T10:00:00",
+    },
+    {
+      title: "اللغة العربية - أ. خديجة",
+      start: "2025-09-14T10:30:00",
+      end: "2025-09-14T11:30:00",
+    },
+    {
+      title: "الأنشطة الفنية - أ. زينب",
+      start: "2025-09-14T11:30:00",
+      end: "2025-09-14T12:30:00",
+    },
+    {
+      title: "التربية الإسلامية - أ. مريم",
+      start: "2025-09-15T08:00:00",
+      end: "2025-09-15T09:00:00",
+    },
+    {
+      title: "العلوم - أ. صفية",
+      start: "2025-09-15T09:00:00",
+      end: "2025-09-15T10:00:00",
+    },
+    {
+      title: "اللغة الإنجليزية - أ. عائشة",
+      start: "2025-09-15T10:30:00",
+      end: "2025-09-15T11:30:00",
+    },
+    {
+      title: "الرياضة - أ. خولة",
+      start: "2025-09-15T11:30:00",
+      end: "2025-09-15T12:30:00",
     },
   ];
 
   const upcomingEvents = [
     {
-      date: "2024-01-15",
+      date: "2025-09-20",
       title: "يوم مفتوح للآباء",
       type: "فعالية",
       time: "10:00 ص",
     },
     {
-      date: "2024-01-18",
+      date: "2025-09-22",
       title: "مسابقة تحفيظ القرآن",
       type: "مسابقة",
       time: "9:00 ص",
     },
-    { date: "2024-01-20", title: "رحلة تعليمية", type: "رحلة", time: "8:00 ص" },
+    { date: "2025-09-25", title: "رحلة تعليمية", type: "رحلة", time: "8:00 ص" },
     {
-      date: "2024-01-22",
+      date: "2025-09-28",
       title: "حفل تكريم المتفوقين",
       type: "حفل",
       time: "11:00 ص",
@@ -135,148 +105,62 @@ const Schedule = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="weekly" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="weekly" className="font-arabic">
-              الجدول الأسبوعي
-            </TabsTrigger>
-            <TabsTrigger value="daily" className="font-arabic">
-              الجدول اليومي
-            </TabsTrigger>
+        <Tabs defaultValue="weekly" className="w-full text-start">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="events" className="font-arabic">
               الفعاليات
             </TabsTrigger>
+
+            <TabsTrigger value="weekly" className="font-arabic">
+              الجدول الأسبوعي
+            </TabsTrigger>
           </TabsList>
 
+          {/* الجدول الأسبوعي */}
           <TabsContent value="weekly" className="space-y-6">
-            <div className="grid gap-6">
-              {weeklySchedule.map((day, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <CardTitle className="font-arabic text-xl">
-                      {day.day}
-                    </CardTitle>
-                    <CardDescription>
-                      {day.classes.length} حصص دراسية
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      {day.classes.map((classItem, classIndex) => (
-                        <div
-                          key={classIndex}
-                          className="border rounded-lg p-4 hover:bg-muted/50 transition-colors"
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-primary" />
-                              <span className="font-medium">
-                                {classItem.time}
-                              </span>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button variant="ghost" size="sm">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="w-4 h-4 text-secondary" />
-                              <span className="font-arabic font-medium">
-                                {classItem.subject}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <Avatar className="w-6 h-6">
-                                <AvatarFallback className="text-xs">
-                                  {classItem.teacher.split(" ")[1]?.charAt(0)}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-sm text-muted-foreground font-arabic">
-                                {classItem.teacher}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <MapPin className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm text-muted-foreground font-arabic">
-                                  {classItem.room}
-                                </span>
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                <Users className="w-4 h-4 text-muted-foreground" />
-                                <Badge
-                                  variant="secondary"
-                                  className="font-arabic"
-                                >
-                                  {classItem.students} طالب
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="daily" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="font-arabic">
-                  جدول اليوم - الأحد
-                </CardTitle>
-                <CardDescription>15 يناير 2024</CardDescription>
+                <CardTitle className="font-arabic">الجدول الأسبوعي</CardTitle>
+                <CardDescription>عرض الحصص لكل أيام الأسبوع</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {weeklySchedule[0].classes.map((classItem, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="text-center">
-                          <div className="font-medium">
-                            {classItem.time.split(" - ")[0]}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            إلى
-                          </div>
-                          <div className="font-medium">
-                            {classItem.time.split(" - ")[1]}
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="font-medium font-arabic">
-                            {classItem.subject}
-                          </h4>
-                          <p className="text-sm text-muted-foreground font-arabic">
-                            {classItem.teacher} - {classItem.room}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant="outline" className="font-arabic">
-                        {classItem.students} طالب
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
+              <CardContent className="overflow-x-auto">
+                <FullCalendar
+                  plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
+                  initialView="timeGridWeek"
+                  direction="rtl"
+                  locales={[arLocale]}
+                  locale="ar"
+                  allDaySlot={false}
+                  slotMinTime="08:00:00"
+                  slotMaxTime="15:00:00"
+                  height="auto"
+                  events={events}
+                  dayHeaderFormat={{ weekday: "long" }} // الأيام كاملة
+                  slotLabelFormat={{
+                    hour: "numeric",
+                    minute: "2-digit",
+                    meridiem: false,
+                  }}
+                  headerToolbar={{
+                    start: "prev,next today",
+                    center: "title",
+                    end: "timeGridWeek,dayGridMonth",
+                  }}
+                  buttonText={{
+                    today: "اليوم",
+                    week: "الأسبوع",
+                    month: "الشهر",
+                  }}
+                  eventClassNames={() =>
+                    "bg-primary text-white rounded-md shadow-sm px-2 py-1"
+                  }
+                  slotEventOverlap={false}
+                />
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* الفعاليات */}
           <TabsContent value="events" className="space-y-6">
             <div className="grid gap-4">
               {upcomingEvents.map((event, index) => (

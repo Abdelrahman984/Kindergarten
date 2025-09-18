@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import DashboardStats from "@/components/DashboardStats";
+import DashboardStats from "@/components/dashboard/DashboardStats";
 import kindergartenHero from "@/assets/kindergarten-hero.jpg";
 import {
   Calendar,

@@ -1,9 +1,9 @@
 // src/pages/Attendance.tsx
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import WeeklyReport from "@/components/WeeklyReport";
-import MonthlyReport from "@/components/MonthlyReport";
-import DailyReport from "@/components/DailyReport";
+import WeeklyReport from "@/components/attendance/WeeklyReport";
+import MonthlyReport from "@/components/attendance/MonthlyReport";
+import DailyReport from "@/components/attendance/DailyReport";
 
 const Attendance = () => {
   const navigate = useNavigate();

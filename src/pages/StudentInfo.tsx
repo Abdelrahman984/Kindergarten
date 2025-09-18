@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useStudents } from "@/api/students";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import SkeletonLoading from "@/components/SkeletonLoading";
+import SkeletonLoading from "@/components/shared/SkeletonLoading";
 
 const StudentInfo = () => {
   const { id } = useParams<{ id: string }>();

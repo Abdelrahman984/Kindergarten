@@ -1,5 +1,5 @@
-import StatsCards from "./StatsCards";
-import SkeletonLoading from "./SkeletonLoading";
+import StatsCards from "../shared/StatsCards";
+import SkeletonLoading from "../shared/SkeletonLoading";
 // src/components/attendance/WeeklyReport.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -37,7 +37,6 @@ export default function WeeklyReport({ date }: { date: string }) {
 
   return (
     <div className="space-y-6">
-
       {/* Totals */}
       <StatsCards
         columns={5}
@@ -87,7 +86,7 @@ export default function WeeklyReport({ date }: { date: string }) {
           <input
             type="date"
             value={selectedDate}
-            onChange={e => setSelectedDate(e.target.value)}
+            onChange={(e) => setSelectedDate(e.target.value)}
             className="border rounded px-2 py-1 text-right font-arabic ml-4"
             style={{ minWidth: 120 }}
           />

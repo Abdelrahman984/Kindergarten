@@ -7,7 +7,7 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-import { ApiStudent } from "../api/students";
+import { ApiStudent } from "../../api/students";
 import { Button } from "@/components/ui/button";
 
 interface StudentFormProps {

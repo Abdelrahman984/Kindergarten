@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import AttendanceTable from "@/components/AttendanceTable";
+import AttendanceTable from "@/components/attendance/AttendanceTable";
 import {
   useDailyStats,
   AttendanceReadDto,
@@ -21,8 +21,8 @@ import { useFilteredList } from "@/hooks/useFilteredList";
 import { ApiClassroom, useClassrooms } from "@/api/classrooms";
 import { attendanceStatusLabels } from "@/api/attendances";
 import { useNavigate } from "react-router-dom";
-import SkeletonLoading from "@/components/SkeletonLoading";
-import StatsCards from "./StatsCards";
+import SkeletonLoading from "@/components/shared/SkeletonLoading";
+import StatsCards from "../shared/StatsCards";
 import { getPercentage } from "@/lib/utils";
 
 interface DailyReportProps {

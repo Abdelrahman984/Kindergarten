@@ -13,7 +13,7 @@ export interface ApiTeacher {
 
 export interface TeacherCreateDto {
   fullName: string;
-  subjectId: string;
+  subjectId?: string;
   phoneNumber?: string;
   isActive: boolean;
   classroomIds?: string[]; // Assign multiple classrooms on creation

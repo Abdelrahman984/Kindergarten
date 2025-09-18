@@ -15,12 +15,12 @@ import {
   mapToUpdateDto,
   ApiStudent,
 } from "../api/students";
-import StudentForm from "../components/StudentForm";
+import StudentForm from "../components/student/StudentForm";
 import { useClassrooms } from "@/api/classrooms";
 import { Calendar, Users } from "lucide-react";
-import StatsCards from "@/components/StatsCards";
-import StudentsTable from "@/components/StudentsTable";
-import SkeletonLoading from "@/components/SkeletonLoading";
+import StatsCards from "@/components/shared/StatsCards";
+import StudentsTable from "@/components/student/StudentsTable";
+import SkeletonLoading from "@/components/shared/SkeletonLoading";
 
 interface Classroom {
   id: string;

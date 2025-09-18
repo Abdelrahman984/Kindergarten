@@ -26,7 +26,7 @@ import {
   useDeleteClassSession,
   useClassSessionsByClassroomId,
 } from "@/api/classSessions";
-import SessionForm from "@/components/SessionForm";
+import SessionForm from "@/components/class_session/SessionForm";
 
 const Schedule = () => {
   const [activeTab, setActiveTab] = useState("weekly");

@@ -1,6 +1,6 @@
 // src/pages/layouts/Layout.tsx
 import React, { useState } from "react";
-import NavigationBar from "@/components/NavigationBar";
+import NavigationBar from "@/components/shared/NavigationBar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [userRole, setUserRole] = useState<"admin" | "teacher" | "parent">(

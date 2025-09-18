@@ -1,7 +1,7 @@
 // src/components/attendance/MonthlyReport.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import SkeletonLoading from "./SkeletonLoading";
-import StatsCards from "./StatsCards";
+import SkeletonLoading from "../shared/SkeletonLoading";
+import StatsCards from "../shared/StatsCards";
 import {
   BarChart,
   Bar,

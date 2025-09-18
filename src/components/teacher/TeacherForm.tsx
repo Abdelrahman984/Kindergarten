@@ -44,20 +44,23 @@ const TeacherForm = ({
   const [selectedClassrooms, setSelectedClassrooms] = useState<string[]>([]);
 
   useEffect(() => {
-    if (initialData) {
-      setFullName(initialData.fullName);
-      setSubjectId(initialData.subjectId ?? ""); // 👈 ناخد id
-      setPhoneNumber(initialData.phoneNumber ?? "");
-      setIsActive(initialData.isActive);
-      setSelectedClassrooms(initialData.classroomIds ?? []);
-    } else {
-      setFullName("");
-      setSubjectId("");
-      setPhoneNumber("");
-      setIsActive(true);
-      setSelectedClassrooms([]);
+    if (open) {
+      // لما الـDialog يتفتح
+      if (initialData) {
+        setFullName(initialData.fullName);
+        setSubjectId(initialData.subjectId ?? null);
+        setPhoneNumber(initialData.phoneNumber ?? "");
+        setIsActive(initialData.isActive);
+        setSelectedClassrooms(initialData.classroomIds ?? []);
+      } else {
+        setFullName("");
+        setSubjectId(null); // أو ""
+        setPhoneNumber("");
+        setIsActive(true);
+        setSelectedClassrooms([]);
+      }
     }
-  }, [initialData]);
+  }, [open, initialData]); // 👈 أضفنا open هنا
 
   const toggleClassroom = (id: string) => {
     setSelectedClassrooms((prev) =>
@@ -70,14 +73,14 @@ const TeacherForm = ({
       ? {
           id: initialData.id,
           fullName,
-          subjectId,
+          subjectId: subjectId ? subjectId : null,
           phoneNumber,
           isActive,
           classroomIds: selectedClassrooms,
         }
       : {
           fullName,
-          subjectId,
+          subjectId: subjectId ? subjectId : null,
           phoneNumber,
           isActive,
           classroomIds: selectedClassrooms,

@@ -9,8 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import TeacherForm from "@/components/TeacherForm";
-import TeacherCard from "@/components/TeacherCard";
+import TeacherForm from "@/components/teacher/TeacherForm";
+import TeacherCard from "@/components/teacher/TeacherCard";
 
 const Teachers = () => {
   const { data: teachers, isLoading, isError } = useTeachers();

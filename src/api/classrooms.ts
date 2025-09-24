@@ -1,5 +1,7 @@
+// src/api/classrooms.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "./client";
+import { ApiStudent } from "./teachers";
 
 // =============================
 // Interfaces
@@ -9,11 +11,14 @@ export interface ApiClassroom {
   name: string;
   capacity: number;
   studentsCount: number;
-  teacherIds?: string[];      // Many-to-many: classroom can have multiple teachers
-  teacherNames?: string[];    // Optional: names of teachers
-  schedule?: string;          // e.g., "8:00 - 12:00"
-  activities?: string[];      // List of activities
-  currentActivity?: string;   // Current running activity
+  teacherIds?: string[]; // Many-to-many: classroom can have multiple teachers
+  teacherNames?: string[]; // Optional: names of teachers
+  schedule?: string; // e.g., "8:00 - 12:00"
+  activities?: string[]; // List of activities
+  currentActivity?: string; // Current running activity
+}
+export interface TeacherClassroom extends ApiClassroom {
+  students: ApiStudent[];
 }
 
 export interface ClassroomCreateDto {

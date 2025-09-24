@@ -18,9 +18,9 @@ import StudentsManagement from "./pages/StudentsManagement";
 import StudentInfo from "./pages/StudentInfo";
 import MarkAttendance from "./pages/MarkAttendance";
 import Subjects from "./pages/Subjects";
-import ClassroomManagement from "./pages/ClassroomManagement";
 import Schedule from "./pages/Schedule";
 import Classroom from "./pages/Classroom";
+import LoginForm from "./pages/LoginForm";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +38,7 @@ const App = () => (
             </Layout>
           }
         />
+        <Route path="/login" element={<LoginForm />} />
         <Route
           path="/students"
           element={

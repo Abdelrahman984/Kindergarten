@@ -173,21 +173,147 @@
       sans-serif;
   }
 
-  /* Custom Scrollbar for RTL */
+  /* Enhanced Custom Scrollbar for RTL - Left Side */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
+    height: 12px;
   }
 
   ::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
+    background: hsl(var(--background));
+    border-radius: 8px;
+    margin: 4px;
+  }
+
+  /* Content wrapper to maintain LTR for content while keeping RTL for scrollbar */
+  .content-wrapper {
+    direction: ltr;
+  }
+
+  /* Force left-side scrollbar for specific containers */
+  .scrollbar-left {
+    direction: rtl;
+    overflow-y: auto;
+  }
+
+  .scrollbar-left > * {
+    direction: ltr;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary));
-    border-radius: 4px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.6),
+      hsl(var(--primary) / 0.8)
+    );
+    border-radius: 8px;
+    border: 2px solid hsl(var(--background));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.1);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary-dark));
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary-dark) / 0.8),
+      hsl(var(--primary))
+    );
+    border-width: 1px;
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
+    transform: scale(1.05);
   }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--primary-light))
+    );
+    box-shadow: 0 2px 6px hsl(var(--primary) / 0.3);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: hsl(var(--background));
+  }
+
+  /* Firefox Scrollbar Support */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.6) hsl(var(--background));
+  }
+
+  /* Custom scrollbar for specific containers with enhanced Islamic styling */
+  .scrollbar-islamic {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.7) transparent;
+    direction: rtl; /* Ensures left-side scrollbar */
+  }
+
+  .scrollbar-islamic > * {
+    direction: ltr; /* Keeps content in correct direction */
+  }
+
+  .scrollbar-islamic::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .scrollbar-islamic::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 6px;
+  }
+
+  .scrollbar-islamic::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      45deg,
+      hsl(var(--primary) / 0.5),
+      hsl(var(--primary-light) / 0.7)
+    );
+    border-radius: 6px;
+    border: 1px solid hsl(var(--background));
+    transition: var(--transition-smooth);
+  }
+
+  .scrollbar-islamic::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      45deg,
+      hsl(var(--primary) / 0.8),
+      hsl(var(--primary-light))
+    );
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Overlay scrollbar for modern browsers */
+  .scrollbar-overlay {
+    overflow: overlay;
+  }
+
+  /* Smooth scrolling behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scroll animations */
+  @keyframes scrollHighlight {
+    0% {
+      box-shadow: 0 0 0 hsl(var(--primary) / 0);
+    }
+    50% {
+      box-shadow: 0 0 8px hsl(var(--primary) / 0.3);
+    }
+    100% {
+      box-shadow: 0 0 0 hsl(var(--primary) / 0);
+    }
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    animation: scrollHighlight 0.6s ease-out;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  overflow-y: auto;
+  direction: rtl;
 }

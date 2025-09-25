@@ -21,6 +21,7 @@ import Subjects from "./pages/Subjects";
 import Schedule from "./pages/Schedule";
 import Classroom from "./pages/Classroom";
 import LoginForm from "./pages/LoginForm";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           }
         />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/students"
           element={

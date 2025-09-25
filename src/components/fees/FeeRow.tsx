@@ -59,18 +59,9 @@ export function FeeTable({ records, onPay, onMarkAsPaid }: FeeTableProps) {
               </TableCell>
               <TableCell className="flex gap-2 justify-center">
                 {r.status !== "Paid" ? (
-                  <>
-                    <Button size="sm" onClick={() => onPay(r.id)}>
-                      دفع
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onMarkAsPaid(r.id)}
-                    >
-                      تعليم كمدفوع
-                    </Button>
-                  </>
+                  <Button size="sm" onClick={() => onMarkAsPaid(r.id)}>
+                    تعليم كمدفوع
+                  </Button>
                 ) : (
                   <span className="text-muted-foreground">تم الدفع</span>
                 )}

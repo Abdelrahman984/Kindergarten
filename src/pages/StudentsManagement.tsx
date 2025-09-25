@@ -76,6 +76,7 @@ export default function StudentsManagement() {
   const totalStudents = students.length;
   const kg1Count = students.filter((s) => s.classroomName === "KG1").length;
   const kg2Count = students.filter((s) => s.classroomName === "KG2").length;
+  const kg3Count = students.filter((s) => s.classroomName === "KG3").length;
   const avgAttendance =
     students.reduce((sum, s) => sum + (s.attendanceRate ?? 0), 0) /
     (students.length || 1);
@@ -84,26 +85,26 @@ export default function StudentsManagement() {
     {
       label: "إجمالي الطلاب",
       value: totalStudents,
-      icon: <Users className="w-6 h-6 text-primary-foreground" />,
-      bgClass: "bg-gradient-islamic",
+      icon: <Users className="w-6 h-6 text-blue-400" />,
+      bgClass: "bg-gradient-to-r from-blue-500 to-blue-700",
     },
     {
       label: "KG1",
       value: kg1Count,
-      icon: <Users className="w-6 h-6 text-secondary-foreground" />,
-      bgClass: "bg-gradient-sky",
+      icon: <Users className="w-6 h-6 text-green-400" />,
+      bgClass: "bg-gradient-to-r from-green-400 to-green-600",
     },
     {
       label: "KG2",
       value: kg2Count,
-      icon: <Users className="w-6 h-6 text-orange-foreground" />,
-      bgClass: "bg-gradient-warm",
+      icon: <Users className="w-6 h-6 text-yellow-400" />,
+      bgClass: "bg-gradient-to-r from-yellow-400 to-yellow-600",
     },
     {
-      label: "معدل الحضور",
-      value: `${avgAttendance.toFixed(0)}%`,
-      icon: <Calendar className="w-6 h-6 text-primary-foreground" />,
-      bgClass: "bg-gradient-islamic",
+      label: "KG3",
+      value: kg3Count,
+      icon: <Users className="w-6 h-6 text-purple-400" />,
+      bgClass: "bg-gradient-to-r from-purple-400 to-purple-600",
     },
   ];
 

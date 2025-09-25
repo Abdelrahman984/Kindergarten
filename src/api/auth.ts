@@ -21,3 +21,20 @@ export const useLogin = () => {
     },
   });
 };
+
+export interface RegisterRequest {
+  fullName: string;
+  email?: string | null;
+  phoneNumber?: string | null;
+  password: string;
+  address?: string | null;
+}
+
+export const useRegister = () => {
+  return useMutation({
+    mutationFn: async (data: RegisterRequest) => {
+      const res = await api.post("/auth/register", data);
+      return res.data;
+    },
+  });
+};

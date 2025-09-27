@@ -34,6 +34,21 @@ export interface ClassroomUpdateDto extends ClassroomCreateDto {
   currentActivity?: string;
 }
 
+export interface ClassroomReport {
+  total: number;
+  averageCapacity: number;
+  withStudents: number;
+  withoutStudents: number;
+  studentsCount: ClassroomStudentCount[];
+}
+
+export interface ClassroomStudentCount {
+  classroomId: string;
+  classroomName: string;
+  classroomCapacity: number;
+  studentCount: number;
+}
+
 // =============================
 // API functions
 // =============================
@@ -59,6 +74,18 @@ async function updateClassroom(dto: ClassroomUpdateDto): Promise<ApiClassroom> {
 
 async function deleteClassroom(id: string): Promise<void> {
   await api.delete(`/classrooms/${id}/hard`);
+}
+
+async function fetchClassroomStats(): Promise<ClassroomReport> {
+  const { data } = await api.get<ClassroomReport>("/classrooms/stats");
+  return data;
+}
+
+async function fetchStudentCounts(): Promise<ClassroomStudentCount[]> {
+  const { data } = await api.get<ClassroomStudentCount[]>(
+    "/classrooms/student-counts"
+  );
+  return data;
 }
 
 // =============================
@@ -107,5 +134,19 @@ export function useDeleteClassroom() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classrooms"] });
     },
+  });
+}
+
+export function useClassroomStats() {
+  return useQuery({
+    queryKey: ["classrooms", "stats"],
+    queryFn: fetchClassroomStats,
+  });
+}
+
+export function useClassroomStudentCount() {
+  return useQuery({
+    queryKey: ["classrooms", "student-count"],
+    queryFn: fetchStudentCounts,
   });
 }

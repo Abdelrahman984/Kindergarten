@@ -39,6 +39,13 @@ export interface StudentUpdateDto {
   ClassroomId: string;
 }
 
+export interface StudentStats {
+  total: number;
+  active: number;
+  inactive: number;
+  averageAge: number;
+}
+
 // ==================
 // Mapping functions
 // ==================
@@ -99,6 +106,11 @@ async function fetchStudentsByClassroom(
   );
   return data;
 }
+// Fetch student statistics
+async function fetchStudentStats(): Promise<StudentStats> {
+  const { data } = await api.get<StudentStats>("/students/stats");
+  return data;
+}
 
 // ==================
 // React Query hooks
@@ -137,5 +149,13 @@ export function useStudentsByClassroom(classroomId: string) {
     queryKey: ["students", "classroom", classroomId],
     queryFn: () => fetchStudentsByClassroom(classroomId),
     enabled: !!classroomId,
+  });
+}
+
+// React Query hook for student statistics
+export function useStudentStats() {
+  return useQuery({
+    queryKey: ["students", "stats"],
+    queryFn: fetchStudentStats,
   });
 }

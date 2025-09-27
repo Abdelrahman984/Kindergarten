@@ -1,4 +1,5 @@
-import { useState } from "react";
+// src/pages/StudentsManagement.tsx
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,22 +15,24 @@ import {
   mapToCreateDto,
   mapToUpdateDto,
   ApiStudent,
+  useStudentStats,
 } from "../api/students";
 import StudentForm from "../components/student/StudentForm";
-import { useClassrooms } from "@/api/classrooms";
-import { Calendar, Users } from "lucide-react";
+import {
+  useClassrooms,
+  useClassroomStudentCount,
+  ClassroomStudentCount,
+} from "@/api/classrooms";
+import { Users } from "lucide-react";
 import StatsCards from "@/components/shared/StatsCards";
 import StudentsTable from "@/components/student/StudentsTable";
 import SkeletonLoading from "@/components/shared/SkeletonLoading";
 
-interface Classroom {
-  id: string;
-  name: string;
-}
-
 export default function StudentsManagement() {
   const { data: students, isLoading, isError } = useStudents();
+  const { data: studentsStats } = useStudentStats();
   const { data: classrooms, isLoading: isLoadingClassrooms } = useClassrooms();
+  const { data: classroomCounts } = useClassroomStudentCount();
   const createStudent = useCreateStudent();
   const updateStudent = useUpdateStudent();
   const deleteStudent = useDeleteStudent();
@@ -42,7 +45,7 @@ export default function StudentsManagement() {
 
   const handleCreate = () => {
     setEditingStudent(null);
-    if (isLoading || isLoadingClassrooms) return <SkeletonLoading />;
+    setFormOpen(true);
   };
 
   const handleEdit = (student: ApiStudent) => {
@@ -69,17 +72,30 @@ export default function StudentsManagement() {
     }
   };
 
-  if (isLoading || isLoadingClassrooms) return <p>Loading...</p>;
+  if (isLoading || isLoadingClassrooms) return <SkeletonLoading />;
   if (isError) return <p>Failed to load students.</p>;
 
   // Stats
-  const totalStudents = students.length;
-  const kg1Count = students.filter((s) => s.classroomName === "KG1").length;
-  const kg2Count = students.filter((s) => s.classroomName === "KG2").length;
-  const kg3Count = students.filter((s) => s.classroomName === "KG3").length;
-  const avgAttendance =
-    students.reduce((sum, s) => sum + (s.attendanceRate ?? 0), 0) /
-    (students.length || 1);
+  const totalStudents = studentsStats?.total ?? 0;
+
+  // color palettes to assign to classrooms cyclically
+  const palette = [
+    "text-green-400",
+    "text-yellow-400",
+    "text-purple-400",
+    "text-pink-400",
+    "text-teal-400",
+  ];
+
+  // Build classroom stats directly from ClassroomStudentCount
+  const classroomCards = (classroomCounts || []).map((cc, idx) => {
+    const pal = palette[idx % palette.length];
+    return {
+      label: cc.classroomName,
+      value: cc.studentCount,
+      icon: <Users className={`w-6 h-6 ${pal}`} />,
+    };
+  });
 
   const stats = [
     {
@@ -88,24 +104,7 @@ export default function StudentsManagement() {
       icon: <Users className="w-6 h-6 text-blue-400" />,
       bgClass: "bg-gradient-to-r from-blue-500 to-blue-700",
     },
-    {
-      label: "KG1",
-      value: kg1Count,
-      icon: <Users className="w-6 h-6 text-green-400" />,
-      bgClass: "bg-gradient-to-r from-green-400 to-green-600",
-    },
-    {
-      label: "KG2",
-      value: kg2Count,
-      icon: <Users className="w-6 h-6 text-yellow-400" />,
-      bgClass: "bg-gradient-to-r from-yellow-400 to-yellow-600",
-    },
-    {
-      label: "KG3",
-      value: kg3Count,
-      icon: <Users className="w-6 h-6 text-purple-400" />,
-      bgClass: "bg-gradient-to-r from-purple-400 to-purple-600",
-    },
+    ...classroomCards,
   ];
 
   return (

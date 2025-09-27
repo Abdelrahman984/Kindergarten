@@ -10,13 +10,14 @@ export interface ApiClassroom {
   id: string;
   name: string;
   capacity: number;
+}
+
+export interface ClassroomDetails extends ApiClassroom {
   studentsCount: number;
   teacherIds?: string[]; // Many-to-many: classroom can have multiple teachers
   teacherNames?: string[]; // Optional: names of teachers
-  schedule?: string; // e.g., "8:00 - 12:00"
-  activities?: string[]; // List of activities
-  currentActivity?: string; // Current running activity
 }
+
 export interface TeacherClassroom extends ApiClassroom {
   students: ApiStudent[];
 }
@@ -57,6 +58,11 @@ async function fetchClassrooms(): Promise<ApiClassroom[]> {
   return data;
 }
 
+async function fetchClassroomsWithDetails(): Promise<ClassroomDetails[]> {
+  const { data } = await api.get<ClassroomDetails[]>("/classrooms/details");
+  return data;
+}
+
 async function fetchClassroomById(id: string): Promise<ApiClassroom> {
   const { data } = await api.get<ApiClassroom>(`/classrooms/${id}`);
   return data;
@@ -73,7 +79,7 @@ async function updateClassroom(dto: ClassroomUpdateDto): Promise<ApiClassroom> {
 }
 
 async function deleteClassroom(id: string): Promise<void> {
-  await api.delete(`/classrooms/${id}/hard`);
+  await api.delete(`/classrooms/${id}`);
 }
 
 async function fetchClassroomStats(): Promise<ClassroomReport> {
@@ -95,6 +101,13 @@ export function useClassrooms() {
   return useQuery({
     queryKey: ["classrooms"],
     queryFn: fetchClassrooms,
+  });
+}
+
+export function useClassroomsWithDetails() {
+  return useQuery({
+    queryKey: ["classrooms", "details"],
+    queryFn: fetchClassroomsWithDetails,
   });
 }
 

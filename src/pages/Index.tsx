@@ -11,14 +11,16 @@ import {
   Star,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [userRole] = useState<"admin" | "teacher" | "parent">("admin");
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
       {/* Welcome Hero Section */}
-      <Card className="overflow-hidden bg-gradient-islamic text-primary-foreground shadow-islamic">
+      <Card className="hidden md:block overflow-hidden bg-gradient-islamic text-primary-foreground shadow-islamic">
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 gap-0">
             <div className="p-8 flex flex-col justify-center">
@@ -30,7 +32,14 @@ const Index = () => {
                 نجمع بين التعليم الحديث والقيم الإسلامية الأصيلة.
               </p>
               <div className="flex gap-3">
-                <Button variant="secondary" size="lg" className="font-arabic">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="font-arabic"
+                  onClick={() => {
+                    navigate("/students");
+                  }}
+                >
                   <BookOpen className="w-4 h-4 ml-2" />
                   إدارة الطلاب
                 </Button>
@@ -38,6 +47,9 @@ const Index = () => {
                   variant="outline"
                   size="lg"
                   className="font-arabic border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                  onClick={() => {
+                    navigate("/attendance");
+                  }}
                 >
                   <Calendar className="w-4 h-4 ml-2" />
                   الحضور اليومي
@@ -61,42 +73,6 @@ const Index = () => {
 
       {/* Quick Actions & Recent Activity */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <Card className="lg:col-span-1 hover:shadow-soft transition-smooth">
-          <CardHeader>
-            <CardTitle className="font-arabic text-right">
-              الإجراءات السريعة
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full justify-start font-arabic"
-            >
-              <Calendar className="w-4 h-4 ml-3" />
-              تسجيل الحضور اليومي
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start font-arabic"
-            >
-              <MessageSquare className="w-4 h-4 ml-3" />
-              إرسال إعلان جديد
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start font-arabic"
-            >
-              <BookOpen className="w-4 h-4 ml-3" />
-              إضافة تقرير تقييم
-            </Button>
-            <Button variant="warm" className="w-full justify-start font-arabic">
-              <Star className="w-4 h-4 ml-3" />
-              عرض أداء الطلاب
-            </Button>
-          </CardContent>
-        </Card>
-
         {/* Recent Activity */}
         <Card className="lg:col-span-2 hover:shadow-soft transition-smooth">
           <CardHeader>
@@ -156,6 +132,49 @@ const Index = () => {
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card className="lg:col-span-1 hover:shadow-soft transition-smooth">
+          <CardHeader>
+            <CardTitle className="font-arabic text-right">
+              الإجراءات السريعة
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-start font-arabic"
+              onClick={() => navigate("/mark-attendance")}
+            >
+              <Calendar className="w-4 h-4 ml-3" />
+              تسجيل الحضور اليومي
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start font-arabic"
+              onClick={() => navigate("/send-announcement")}
+            >
+              <MessageSquare className="w-4 h-4 ml-3" />
+              إرسال إعلان جديد
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start font-arabic"
+              onClick={() => navigate("/add-evaluation-report")}
+            >
+              <BookOpen className="w-4 h-4 ml-3" />
+              إضافة تقرير تقييم
+            </Button>
+            <Button
+              variant="warm"
+              className="w-full justify-start font-arabic"
+              onClick={() => navigate("/student-performance")}
+            >
+              <Star className="w-4 h-4 ml-3" />
+              عرض أداء الطلاب
+            </Button>
           </CardContent>
         </Card>
       </div>

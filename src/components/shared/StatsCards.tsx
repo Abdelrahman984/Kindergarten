@@ -52,17 +52,19 @@ const StatsCards = ({ stats, columns = 4 }: StatsCardsProps) => (
 
             {/* Trend */}
             {stat.trend && (
-              <Badge
-                variant="outline"
-                className="flex items-center gap-3 text-xs font-arabic"
-              >
-                <TrendingUp
-                  className={`w-3 h-3 ${
-                    trendUp ? "" : "rotate-180"
-                  } ${trendColor}`}
+              <div className="flex justify-center">
+                <Badge
+                  variant="outline"
+                  className="w-30 flex items-center justify-center gap-3 text-xs font-arabic"
+                >
+                  <TrendingUp
+                    className={`w-3 h-3 ${
+                      trendUp ? "" : "rotate-180"
+                    } ${trendColor}`}
                   />
                   {stat.trend}
-              </Badge>
+                </Badge>
+              </div>
             )}
           </CardContent>
         </Card>

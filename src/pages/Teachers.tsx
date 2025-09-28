@@ -4,6 +4,7 @@ import {
   useCreateTeacher,
   useUpdateTeacher,
   useDeleteTeacher,
+  useTeacherStats,
   ApiTeacher,
 } from "@/api/teachers";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import TeacherForm from "@/components/teacher/TeacherForm";
 import TeacherCard from "@/components/teacher/TeacherCard";
+import StatsCards from "@/components/shared/StatsCards";
+import { Users, CheckCircle, XCircle, BookOpen, Book } from "lucide-react";
 
 const Teachers = () => {
   const { data: teachers, isLoading, isError } = useTeachers();
@@ -21,6 +24,58 @@ const Teachers = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<ApiTeacher | null>(null);
   const [search, setSearch] = useState("");
+
+  // teacher stats
+  const { data: teacherStats, isLoading: statsLoading } = useTeacherStats();
+
+  const statCards =
+    teacherStats?.total > 0
+      ? [
+          {
+            label: "إجمالي المعلمين",
+            value: teacherStats.total,
+            icon: <Users className="w-5 h-5 text-sky-500" />,
+          },
+          {
+            label: "المعلمين النشطين",
+            value: teacherStats.active,
+            icon: <CheckCircle className="w-5 h-5 text-green-500" />,
+            trend: `${Math.round(
+              (teacherStats.active / Math.max(1, teacherStats.total)) * 100
+            )}%`,
+            isPositiveStat: true,
+          },
+          {
+            label: "المعلمين غير النشطين",
+            value: teacherStats.inactive,
+            icon: <XCircle className="w-5 h-5 text-red-500" />,
+            trend: `${Math.round(
+              (teacherStats.inactive / Math.max(1, teacherStats.total)) * 100
+            )}%`,
+            isPositiveStat: false,
+          },
+          {
+            label: "مع مواد",
+            value: teacherStats.withSubjects,
+            icon: <BookOpen className="w-5 h-5 text-green-500" />,
+            trend: `${Math.round(
+              (teacherStats.withSubjects / Math.max(1, teacherStats.total)) *
+                100
+            )}%`,
+            isPositiveStat: true,
+          },
+          {
+            label: "بدون مواد",
+            value: teacherStats.withoutSubjects,
+            icon: <Book className="w-5 h-5 text-red-500" />,
+            trend: `${Math.round(
+              (teacherStats.withoutSubjects / Math.max(1, teacherStats.total)) *
+                100
+            )}%`,
+            isPositiveStat: false,
+          },
+        ]
+      : [];
 
   const filteredTeachers =
     teachers?.filter(
@@ -44,7 +99,18 @@ const Teachers = () => {
           إضافة معلم
         </Button>
       </div>
-      {/* 🔍 البحث + إضافة */}
+      {/* إحصائيات المعلمين */}
+      <div>
+        {statsLoading ? (
+          <div className="mb-4 text-sm text-muted-foreground">
+            جاري تحميل الإحصائيات...
+          </div>
+        ) : (
+          statCards.length > 0 && <StatsCards stats={statCards} columns={5} />
+        )}
+      </div>
+
+      {/* �🔍 البحث + إضافة */}
       <div className="flex justify-between items-center gap-4">
         <Input
           placeholder="ابحث بالاسم أو المادة أو الهاتف..."

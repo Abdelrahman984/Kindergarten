@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "./client";
+import { ApiStudent } from "./students";
 
 export interface ApiTeacher {
   id: string;
@@ -23,19 +24,17 @@ export interface TeacherUpdateDto extends TeacherCreateDto {
   id: string;
 }
 
-export interface ApiStudent {
-  id: string;
-  fullName: string;
-  dateOfBirth?: string;
-  parentPhone?: string;
-  isActive?: boolean;
-  classroomId?: string;
-  classroomName?: string;
-  attendanceRate?: number;
-  address?: string;
+export interface TeacherStats {
+  total: number;
+  active: number;
+  inactive: number;
+  withSubjects: number;
+  withoutSubjects: number;
 }
 
+// ==================
 // API functions
+// ==================
 async function fetchTeachers(): Promise<ApiTeacher[]> {
   const { data } = await api.get<ApiTeacher[]>("/teachers");
   return data;
@@ -67,7 +66,14 @@ async function fetchTeacherClassrooms(teacherId: string) {
   return data;
 }
 
+async function fetchTeacherStats(): Promise<TeacherStats> {
+  const { data } = await api.get<TeacherStats>("/teachers/stats");
+  return data;
+}
+
+// ==================
 // Hooks
+// ==================
 export function useTeachers() {
   return useQuery({ queryKey: ["teachers"], queryFn: fetchTeachers });
 }
@@ -108,5 +114,12 @@ export function useTeacherClassrooms(teacherId: string) {
     queryKey: ["teacherClassrooms", teacherId],
     queryFn: () => fetchTeacherClassrooms(teacherId),
     enabled: !!teacherId,
+  });
+}
+
+export function useTeacherStats() {
+  return useQuery({
+    queryKey: ["teacherStats"],
+    queryFn: fetchTeacherStats,
   });
 }

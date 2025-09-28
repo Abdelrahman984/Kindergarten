@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { format } from "date-fns";
 import {
   Dialog,
   DialogTitle,
@@ -7,6 +8,7 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { ApiStudent } from "../../api/students";
 import { Button } from "@/components/ui/button";
 
@@ -25,89 +27,78 @@ export default function StudentForm({
   initialData,
   classrooms,
 }: StudentFormProps) {
-  const [firstName, setFirstName] = useState("");
-  const [fatherName, setFatherName] = useState("");
-  const [grandpaName, setGrandpaName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [parentPhone, setParentPhone] = useState("");
   const [address, setAddress] = useState("");
   const [classroomId, setClassroomId] = useState("");
+  const [parentName, setParentName] = useState("");
+  const [parentPhone, setParentPhone] = useState("");
+  const [parentAddress, setParentAddress] = useState("");
 
   // لو في initialData (تعديل)
   useEffect(() => {
     if (initialData) {
-      const parts = initialData.fullName.split(" ");
-      setFirstName(parts[0] ?? "");
-      setFatherName(parts[1] ?? "");
-      setGrandpaName(parts[2] ?? "");
+      setFullName(initialData.fullName);
       setDateOfBirth(initialData.dateOfBirth.split("T")[0]);
-      setParentPhone(initialData.parentPhone);
       setAddress(initialData.address);
       setClassroomId(initialData.classroomId);
+      setParentName(initialData.parentName);
+      setParentPhone(initialData.parentPhone);
+      setParentAddress(initialData.parentAddress);
     } else {
-      setFirstName("");
-      setFatherName("");
-      setGrandpaName("");
+      setFullName("");
       setDateOfBirth("");
-      setParentPhone("");
       setAddress("");
       setClassroomId("");
+      setParentName("");
+      setParentPhone("");
+      setParentAddress("");
     }
   }, [initialData, open]);
 
   const handleSubmit = () => {
     const student: Partial<ApiStudent> = {
       id: initialData?.id,
-      fullName: `${firstName} ${fatherName} ${grandpaName}`.trim(),
+      fullName,
       dateOfBirth,
-      parentPhone,
       address,
       classroomId,
+      parentName,
+      parentPhone,
+      parentAddress,
     };
     onSubmit(student);
     onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl">
       <DialogTitle>{initialData ? "تعديل الطالب" : "إضافة طالب"}</DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers dir="rtl" className="text-right">
         <TextField
-          label="الاسم الأول"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          label="الاسم الكامل"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
           fullWidth
           margin="normal"
         />
-        <TextField
-          label="اسم الأب"
-          value={fatherName}
-          onChange={(e) => setFatherName(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="اسم الجد"
-          value={grandpaName}
-          onChange={(e) => setGrandpaName(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
+        <DatePicker
           label="تاريخ الميلاد"
-          type="date"
-          value={dateOfBirth}
-          onChange={(e) => setDateOfBirth(e.target.value)}
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-        />
-        <TextField
-          label="رقم ولي الأمر"
-          value={parentPhone}
-          onChange={(e) => setParentPhone(e.target.value)}
-          fullWidth
-          margin="normal"
+          value={dateOfBirth ? new Date(dateOfBirth) : null}
+          onChange={(newVal) => {
+            if (newVal instanceof Date && !isNaN(newVal.getTime())) {
+              // keep same format (YYYY-MM-DD) as initialData
+              setDateOfBirth(format(newVal, "yyyy-MM-dd"));
+            } else {
+              setDateOfBirth("");
+            }
+          }}
+          slotProps={{
+            textField: {
+              fullWidth: true,
+              margin: "normal",
+            },
+          }}
         />
         <TextField
           label="العنوان"
@@ -115,6 +106,7 @@ export default function StudentForm({
           onChange={(e) => setAddress(e.target.value)}
           fullWidth
           margin="normal"
+          dir="rtl"
         />
         <TextField
           select
@@ -130,6 +122,27 @@ export default function StudentForm({
             </MenuItem>
           ))}
         </TextField>
+        <TextField
+          label="اسم ولي الأمر الكامل"
+          value={parentName}
+          onChange={(e) => setParentName(e.target.value)}
+          fullWidth
+          margin="normal"
+        />{" "}
+        <TextField
+          label="رقم ولي الأمر"
+          value={parentPhone}
+          onChange={(e) => setParentPhone(e.target.value)}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="عنوان ولي الأمر"
+          value={parentAddress}
+          onChange={(e) => setParentAddress(e.target.value)}
+          fullWidth
+          margin="normal"
+        />
       </DialogContent>
       <DialogActions>
         <div className="flex justify-end gap-2">

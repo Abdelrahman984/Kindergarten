@@ -53,7 +53,7 @@ export default function StudentsTable({
   const filteredStudents = students?.filter((s) => {
     const matchesSearch =
       s.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.parentFullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.parentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.parentPhone.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesClassroom =
@@ -130,7 +130,7 @@ export default function StudentsTable({
                 <TableRow key={student.id} hover>
                   <TableCell>{student.fullName}</TableCell>
                   <TableCell>{student.dateOfBirth.split("T")[0]}</TableCell>
-                  <TableCell>{student.parentFullName}</TableCell>
+                  <TableCell>{student.parentName}</TableCell>
                   <TableCell>{student.parentPhone}</TableCell>
                   <TableCell>{student.address}</TableCell>
                   <TableCell>{student.classroomName}</TableCell>

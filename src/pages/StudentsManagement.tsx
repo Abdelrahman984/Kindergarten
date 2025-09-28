@@ -12,10 +12,10 @@ import {
   useCreateStudent,
   useUpdateStudent,
   useDeleteStudent,
-  mapToCreateDto,
-  mapToUpdateDto,
   ApiStudent,
   useStudentStats,
+  StudentCreateDto,
+  StudentUpdateDto,
 } from "../api/students";
 import StudentForm from "../components/student/StudentForm";
 import {
@@ -66,9 +66,9 @@ export default function StudentsManagement() {
 
   const handleSubmit = (student: Partial<ApiStudent>) => {
     if (student.id) {
-      updateStudent.mutate(mapToUpdateDto(student as ApiStudent));
+      updateStudent.mutate(student as StudentUpdateDto);
     } else {
-      createStudent.mutate(mapToCreateDto(student as ApiStudent));
+      createStudent.mutate(student as StudentCreateDto);
     }
   };
 

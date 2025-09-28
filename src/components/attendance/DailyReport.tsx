@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { TextField, MenuItem } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { format } from "date-fns";
 import AttendanceTable from "@/components/attendance/AttendanceTable";
 import {
   useDailyStats,
@@ -145,52 +148,73 @@ const DailyReport = ({ date }: DailyReportProps) => {
               <CardTitle className="font-arabic text-right">
                 حضور اليوم
               </CardTitle>
-              <input
-                id="day-picker"
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="border rounded px-2 py-1 text-right font-arabic cursor-pointer"
-                style={{ minWidth: 120 }}
-              />
             </div>
-            <div className="flex flex-col md:flex-row gap-2 items-center w-full md:w-auto">
+            <div className="flex flex-col md:flex-row gap-2 items-center w-full md:w-auto flex-wrap min-w-0">
               {/* Search Input */}
-              <div className="relative w-40 md:w-64">
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
+              <div className="relative w-full md:w-64 min-w-0">
+                <TextField
+                  label="بحث"
                   placeholder="البحث عن طالب..."
-                  className="pr-10 w-full h-10 text-right font-arabic"
+                  variant="outlined"
+                  size="small"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  fullWidth
                 />
               </div>
               {/* Classroom Dropdown */}
-              <select
-                className="px-5 w-30 h-10 text-right font-arabic bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              <TextField
+                select
+                label="الفصل"
+                variant="outlined"
+                size="small"
                 value={selectedClassroom}
                 onChange={(e) => setSelectedClassroom(e.target.value)}
+                className="w-full md:w-36 min-w-0"
               >
-                <option value="">كل الفصول</option>
-                {classrooms?.map((c: ApiClassroom) => (
-                  <option key={c.id} value={c.name}>
+                <MenuItem value="">الكل</MenuItem>
+                {classrooms?.map((c) => (
+                  <MenuItem key={c.id} value={c.name}>
                     {c.name}
-                  </option>
+                  </MenuItem>
                 ))}
-              </select>
+              </TextField>
               {/* Status Dropdown */}
-              <select
-                className="px-5 w-30 h-10 text-right font-arabic bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              <TextField
+                select
+                label="الحالة"
+                variant="outlined"
+                size="small"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full md:w-36 min-w-0"
               >
-                <option value="">كل الحالات</option>
+                <MenuItem value="">كل الحالات</MenuItem>
                 {Object.entries(attendanceStatusLabels).map(([key, label]) => (
-                  <option key={key} value={key}>
+                  <MenuItem key={key} value={key}>
                     {label}
-                  </option>
+                  </MenuItem>
                 ))}
-              </select>
+              </TextField>
+
+              <DatePicker
+                label={"التاريخ"}
+                value={selectedDate ? new Date(selectedDate) : null}
+                onChange={(newVal) => {
+                  if (newVal instanceof Date && !isNaN(newVal.getTime())) {
+                    setSelectedDate(format(newVal, "yyyy-MM-dd"));
+                  } else {
+                    setSelectedDate("");
+                  }
+                }}
+                slotProps={{
+                  textField: {
+                    size: "small",
+                    className: "w-full md:w-40 min-w-0",
+                  },
+                }}
+                className="w-full md:w-auto"
+              />
             </div>
           </div>
         </CardHeader>

@@ -1,42 +1,36 @@
 // src/api/students.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "./client";
+import { s } from "node_modules/@fullcalendar/core/internal-common";
 
 // API model (اللي راجع من الـ API)
 export interface ApiStudent {
   id: string;
   fullName: string;
   dateOfBirth: string;
-  parentFullName: string;
-  parentPhone: string;
   address: string;
-  parentAddress: string;
   isActive: boolean;
   classroomId: string;
   classroomName: string;
   attendanceRate: number;
+  parentName: string;
+  parentPhone: string;
+  parentAddress: string;
 }
 
 // DTOs (اللي محتاجها الـ API عند الإنشاء أو التعديل)
 export interface StudentCreateDto {
-  FirstName: string;
-  FatherName: string;
-  GrandpaName: string;
+  FullName: string;
   DateOfBirth: string;
-  ParentPhone: string;
   Address: string;
   ClassroomId: string;
+  ParentName: string;
+  ParentPhone: string;
+  ParentAddress: string;
 }
 
-export interface StudentUpdateDto {
+export interface StudentUpdateDto extends StudentCreateDto {
   id: string;
-  FirstName: string;
-  FatherName: string;
-  GrandpaName: string;
-  DateOfBirth: string;
-  ParentPhone: string;
-  Address: string;
-  ClassroomId: string;
 }
 
 export interface StudentStats {
@@ -44,36 +38,6 @@ export interface StudentStats {
   active: number;
   inactive: number;
   averageAge: number;
-}
-
-// ==================
-// Mapping functions
-// ==================
-export function mapToCreateDto(student: ApiStudent): StudentCreateDto {
-  const [firstName, fatherName, grandpaName] = student.fullName.split(" ");
-  return {
-    FirstName: firstName ?? "",
-    FatherName: fatherName ?? "",
-    GrandpaName: grandpaName ?? "",
-    DateOfBirth: student.dateOfBirth,
-    ParentPhone: student.parentPhone,
-    Address: student.address,
-    ClassroomId: student.classroomId,
-  };
-}
-
-export function mapToUpdateDto(student: ApiStudent): StudentUpdateDto {
-  const [firstName, fatherName, grandpaName] = student.fullName.split(" ");
-  return {
-    id: student.id,
-    FirstName: firstName ?? "",
-    FatherName: fatherName ?? "",
-    GrandpaName: grandpaName ?? "",
-    DateOfBirth: student.dateOfBirth,
-    ParentPhone: student.parentPhone,
-    Address: student.address,
-    ClassroomId: student.classroomId,
-  };
 }
 
 // ==================

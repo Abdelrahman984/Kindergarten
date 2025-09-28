@@ -11,7 +11,6 @@ import {
   MessageSquare,
   Settings,
   LogOut,
-  BookOpen, // optional icon name — if your lucide-react build doesn't have BookOpen, replace with another
   LogIn,
   UserPlus,
 } from "lucide-react";
@@ -22,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AssessmentOutlined } from "@mui/icons-material";
 
 interface NavigationProps {
   activeSection: string;
@@ -49,10 +47,10 @@ const Navigation = ({
       icon: LayoutDashboard,
       route: "/",
     },
-    { id: "students", label: "إدارة الطلاب", icon: Users, route: "/students" },
+    { id: "students", label: "الطلاب", icon: Users, route: "/students" },
     {
       id: "teachers",
-      label: "إدارة المعلمين",
+      label: "المعلمين",
       icon: GraduationCap,
       route: "/teachers",
     },
@@ -62,19 +60,19 @@ const Navigation = ({
       icon: Calendar,
       route: "/attendance",
     },
-    { id: "fees", label: "إدارة الرسوم", icon: DollarSign, route: "/fees" },
-    {
-      id: "announcements",
-      label: "الإعلانات",
-      icon: MessageSquare,
-      route: "/announcements",
-    },
-    {
-      id: "reports",
-      label: "التقارير",
-      icon: AssessmentOutlined,
-      route: "/reports",
-    },
+    { id: "fees", label: "الرسوم", icon: DollarSign, route: "/fees" },
+    // {
+    //   id: "announcements",
+    //   label: "الإعلانات",
+    //   icon: MessageSquare,
+    //   route: "/announcements",
+    // },
+    // {
+    //   id: "reports",
+    //   label: "التقارير",
+    //   icon: AssessmentOutlined,
+    //   route: "/reports",
+    // },
     {
       id: "subjects",
       label: "المواد",
@@ -239,17 +237,20 @@ const Navigation = ({
 
           {/* User Role Badge + Role Switch */}
           <div className="mb-6 text-center space-y-3">
-            <Badge variant="secondary" className="font-arabic">
+            <Badge
+              variant="secondary"
+              className="font-arabic w-full flex justify-center items-center"
+            >
               {
                 {
-                  admin: "مدير",
-                  teacher: "معلم",
-                  parent: "ولي أمر",
+                  admin: "صفحة المدير",
+                  teacher: "صفحة المعلم",
+                  parent: "صفحة ولي الأمر",
                 }[userRole]
               }
             </Badge>
 
-            <Select
+            {/* <Select
               value={userRole}
               onValueChange={(value) =>
                 setUserRole(value as "admin" | "teacher" | "parent")
@@ -263,7 +264,7 @@ const Navigation = ({
                 <SelectItem value="teacher">معلم</SelectItem>
                 <SelectItem value="parent">ولي أمر</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
 
           {/* Navigation Menu */}

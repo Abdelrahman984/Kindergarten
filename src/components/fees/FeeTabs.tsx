@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
+import { MenuItem } from "@mui/material";
 import { FeeTable } from "./FeeRow";
 import { FeeRecord } from "@/api/fees";
 import { useClassrooms } from "@/api/classrooms";
@@ -18,7 +12,8 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { AlertCircle, CheckCircle, Clock, Search } from "lucide-react";
-import { Card } from "@mui/material";
+import { Card, TextField, InputAdornment } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 interface FeesTabsProps {
   feeRecords: FeeRecord[];
@@ -51,60 +46,98 @@ export default function FeesTabs({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* 🔍 فلاتر */}
-      <Card className="p-4 shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+      <Card className="px-6 py-4 shadow-md rounded-xl bg-white">
+        <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-end">
           {/* مربع البحث */}
-          <div className="relative md:col-span-6">
-            <Search
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input
-              type="text"
+          <div className="flex-1">
+            <TextField
               placeholder="ابحث بالاسم..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-3 pr-10 w-full"
+              fullWidth
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Search size={18} className="text-gray-400" />
+                  </InputAdornment>
+                ),
+                style: { borderRadius: 8, background: "#fafbfc" },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  backgroundColor: "#fafbfc",
+                },
+              }}
             />
           </div>
 
-          {/* الفلتر بالصف */}
-          <div className="md:col-span-3">
-            <Select
+          {/* الفلتر بالصف (MUI TextField select) */}
+          <div className="w-full md:w-56">
+            <TextField
+              select
               value={selectedClass}
-              onValueChange={setSelectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
               dir="rtl"
+              size="small"
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  backgroundColor: "#fafbfc",
+                },
+              }}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="اختر الصف" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">كل الصفوف</SelectItem>
-                {isLoading ? (
-                  <SelectItem value="loading" disabled>
-                    جاري التحميل...
-                  </SelectItem>
-                ) : (
-                  classrooms.map((cls) => (
-                    <SelectItem key={cls.id} value={cls.name}>
-                      {cls.name}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+              <MenuItem value="all">كل الصفوف</MenuItem>
+              {isLoading ? (
+                <MenuItem value="loading" disabled>
+                  جاري التحميل...
+                </MenuItem>
+              ) : (
+                classrooms.map((cls) => (
+                  <MenuItem key={cls.id} value={cls.name}>
+                    {cls.name}
+                  </MenuItem>
+                ))
+              )}
+            </TextField>
           </div>
 
           {/* الفلتر بالتاريخ */}
-          <div className="md:col-span-3">
-            <Input
-              dir="rtl"
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="text-right w-full"
+          <div className="w-full md:w-56 flex items-center justify-center">
+            <DatePicker
+              value={selectedDate ? new Date(selectedDate) : null}
+              onChange={(newVal) => {
+                if (newVal instanceof Date && !isNaN(newVal.getTime())) {
+                  const yyyy = newVal.getFullYear();
+                  const mm = String(newVal.getMonth() + 1).padStart(2, "0");
+                  const dd = String(newVal.getDate()).padStart(2, "0");
+                  setSelectedDate(`${yyyy}-${mm}-${dd}`);
+                } else {
+                  setSelectedDate("");
+                }
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  size: "small",
+                  margin: "none", // 👈 عشان يطابق الباقي
+                  dir: "rtl",
+                  sx: {
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                      backgroundColor: "#fafbfc",
+                      height: "40px", // 👈 خلي الارتفاع ثابت زي باقي الحقول
+                    },
+                    "& .MuiInputBase-input": {
+                      padding: "8.5px 14px", // 👈 padding زي TextField الصغير
+                    },
+                  },
+                },
+              }}
             />
           </div>
         </div>
@@ -112,11 +145,11 @@ export default function FeesTabs({
 
       {/* Tabs */}
       <Tabs defaultValue="current" dir="rtl">
-        <TabsList className="grid grid-cols-3 bg-muted rounded-lg">
+        <TabsList className="grid grid-cols-3 bg-gray-50 rounded-lg shadow-sm border border-gray-200 mb-2">
           {/* الحالية */}
           <TabsTrigger
             value="current"
-            className="data-[state=active]:bg-warning/10 rounded-md px-4 py-2 transition"
+            className="data-[state=active]:bg-warning/20 data-[state=active]:text-warning-900 rounded-md px-4 py-2 transition font-semibold"
           >
             <TooltipProvider delayDuration={200}>
               <Tooltip>
@@ -136,7 +169,7 @@ export default function FeesTabs({
           {/* المتأخرة */}
           <TabsTrigger
             value="overdue"
-            className="data-[state=active]:bg-destructive/10 rounded-md px-4 py-2 transition"
+            className="data-[state=active]:bg-destructive/20 data-[state=active]:text-destructive-900 rounded-md px-4 py-2 transition font-semibold"
           >
             <TooltipProvider delayDuration={200}>
               <Tooltip>
@@ -156,7 +189,7 @@ export default function FeesTabs({
           {/* المدفوعة */}
           <TabsTrigger
             value="history"
-            className="data-[state=active]:bg-success/10 rounded-md px-4 py-2 transition"
+            className="data-[state=active]:bg-success/20 data-[state=active]:text-success-900 rounded-md px-4 py-2 transition font-semibold"
           >
             <TooltipProvider delayDuration={200}>
               <Tooltip>

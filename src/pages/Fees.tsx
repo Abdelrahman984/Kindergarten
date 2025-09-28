@@ -36,7 +36,7 @@ const Fees = () => {
       </div>
 
       {/* إحصائيات */}
-      <FeeStats feeRecords={feeRecords} />
+      <FeeStats />
 
       {/* التابات + الجدول */}
       <FeeTabs

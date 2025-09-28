@@ -1,45 +1,55 @@
 import StatsCards, { StatCard } from "@/components/shared/StatsCards";
-import { DollarSign, CheckCircle, AlertCircle, Clock } from "lucide-react";
-import { FeeRecord } from "@/api/fees";
+import {
+  DollarSign,
+  CheckCircle,
+  AlertCircle,
+  Clock,
+  Layers,
+  PieChart,
+} from "lucide-react";
+import { useFeeStats } from "@/api/fees";
 
-interface FeeStatsProps {
-  feeRecords: FeeRecord[];
-}
+const FeeStats = () => {
+  const { data: stats, isLoading } = useFeeStats();
 
-const FeeStats = ({ feeRecords }: FeeStatsProps) => {
-  const stats: StatCard[] = [
+  if (isLoading || !stats) return null;
+
+  const cards: StatCard[] = [
     {
       label: "إجمالي الرسوم",
-      value: feeRecords.reduce((sum, f) => sum + f.amount, 0),
+      value: stats.totalAmount,
       icon: <DollarSign className="w-5 h-5 text-primary" />,
     },
     {
       label: "المحصل",
-      value: feeRecords
-        .filter((f) => f.status === "Paid")
-        .reduce((sum, f) => sum + f.amount, 0),
+      value: stats.paidAmount,
       icon: <CheckCircle className="w-5 h-5 text-success" />,
       isPositiveStat: true,
+      trend: stats.paidCount ? `${stats.paidCount} طلاب` : undefined,
     },
     {
       label: "متأخر",
-      value: feeRecords
-        .filter((f) => f.status === "Overdue")
-        .reduce((sum, f) => sum + f.amount, 0),
+      value: stats.overdueAmount,
       icon: <AlertCircle className="w-5 h-5 text-destructive" />,
       isPositiveStat: false,
+      trend: stats.overdueCount ? `${stats.overdueCount} طلاب` : undefined,
     },
     {
       label: "معلق",
-      value: feeRecords
-        .filter((f) => f.status === "Pending")
-        .reduce((sum, f) => sum + f.amount, 0),
+      value: stats.pendingAmount,
       icon: <Clock className="w-5 h-5 text-warning" />,
       isPositiveStat: false,
+      trend: stats.pendingCount ? `${stats.pendingCount} طلاب` : undefined,
+    },
+    {
+      label: "نسبة التحصيل",
+      value: `${Math.round((stats.collectionRate || 0))}%`,
+      icon: <PieChart className="w-5 h-5 text-emerald-500" />,
+      isPositiveStat: true,
     },
   ];
 
-  return <StatsCards stats={stats} columns={4} />;
+  return <StatsCards stats={cards} columns={5} />;
 };
 
 export default FeeStats;

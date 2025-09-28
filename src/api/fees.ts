@@ -21,13 +21,22 @@ export interface PayFeePayload {
   transactionId?: string;
 }
 
-// دالة لجلب كل الرسوم
+export interface FeeStats {
+  totalAmount: number;
+  paidAmount: number;
+  pendingAmount: number;
+  overdueAmount: number;
+  paidCount: number;
+  pendingCount: number;
+  overdueCount: number;
+  collectionRate: number;
+}
+
 const fetchFees = async (): Promise<FeeRecord[]> => {
   const { data } = await api.get<FeeRecord[]>("/fees"); // عدل الـ URL حسب الـ backend
   return data;
 };
 
-// Hook لجلب الرسوم
 export const useFees = () => {
   return useQuery<FeeRecord[], Error>({
     queryKey: ["fees"],
@@ -37,7 +46,7 @@ export const useFees = () => {
 };
 
 // دالة دفع الرسوم
-const payFee = async (id: string) => {
+export const payFee = async (id: string) => {
   const { data } = await api.post(`/fees/${id}/pay`);
   return data;
 };
@@ -93,4 +102,13 @@ export const usePayFee = () => {
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["fees"] }),
   });
+};
+
+export const fetchFeeStats = async (): Promise<FeeStats> => {
+  const { data } = await api.get<FeeStats>("/fees/stats");
+  return data;
+};
+
+export const useFeeStats = () => {
+  return useQuery({ queryKey: ["feeStats"], queryFn: fetchFeeStats });
 };
